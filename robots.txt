@@ -1,0 +1,12 @@
+# Fencly Australia — robots.txt
+# https://fencly.com.au/
+
+User-agent: *
+Allow: /
+Disallow:
+
+# Block common AI scraper traffic (optional — remove if you want AI visibility)
+# User-agent: GPTBot
+# Disallow: /
+
+Sitemap: https://fencly.com.au/sitemap.xml

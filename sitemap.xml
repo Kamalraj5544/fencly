@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://fencly.com.au/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/hero.jpg</image:loc>
+      <image:title>Fencly — WPC Composite Fencing Australia</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p1-dual-tone.jpg</image:loc>
+      <image:title>Dual Tone Slat Wall — Fencly WPC Composite Fence</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p2-single-tone.jpg</image:loc>
+      <image:title>Single Tone Slat Wall — Fencly WPC Composite Fence</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p4-privacy.jpg</image:loc>
+      <image:title>Privacy Fence — Fencly Zero-Gap WPC Composite Fence</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p5-carving.jpg</image:loc>
+      <image:title>Carving Fence — Fencly Laser-Cut Decorative Fence</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p6-super-kit.jpg</image:loc>
+      <image:title>Super Kit WPC Post — Fencly All-WPC Fencing System</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p7-trellis.jpg</image:loc>
+      <image:title>Mid and Full Trellis — Fencly WPC Composite Trellis</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p8-woven.jpg</image:loc>
+      <image:title>Woven Fence — Fencly Basket-Weave WPC Composite Fence</image:title>
+    </image:image>
+  </url>
+</urlset>
