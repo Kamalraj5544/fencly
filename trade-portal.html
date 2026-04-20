@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Trade Partner Portal · Fencly Australia · WPC Fence Supplier</title>
+  <meta name="description"
+    content="Fencly trade partner portal — login for verified contractors. Spec sheets, install guides, trade pricing and lead-time tracking for premium co-extruded WPC fencing." />
+  <meta name="robots" content="noindex,follow" />
+  <meta name="theme-color" content="#2C1810" />
+  <link rel="canonical" href="https://fencly.com.au/trade-portal.html" />
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="apple-touch-icon" href="images/logo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600&family=Inter+Tight:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body class="page-doc page-portal">
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="nav nav--solid" id="nav" role="banner">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo" aria-label="Fencly home">
+        <img src="images/logo.png" alt="" class="nav__logo-mark" width="40" height="40" />
+        <span class="nav__logo-word">Fencly</span>
+      </a>
+      <a href="index.html#trade" class="nav__cta">
+        <span class="nav__cta-label">Apply to Become a Partner</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main" class="portal">
+    <div class="container portal__container">
+      <div class="portal__grid">
+
+        <div class="portal__intro">
+          <p class="eyebrow">Trade Partners</p>
+          <h1 class="portal__title">Welcome back, <em>partner.</em></h1>
+          <p class="portal__lead">
+            Sign in to access trade pricing, lead-time dashboards, install guides and your live order tracker.
+            New to Fencly? <a href="index.html#trade">Apply to become a verified trade partner</a> &mdash; we usually
+            approve applications within one business day.
+          </p>
+
+          <ul class="portal__perks">
+            <li><span aria-hidden="true">✓</span>Protected trade pricing &mdash; no consumer undercutting, ever.</li>
+            <li><span aria-hidden="true">✓</span>Branded sample sets for client presentations.</li>
+            <li><span aria-hidden="true">✓</span>Spec sheets, CAD blocks &amp; install videos.</li>
+            <li><span aria-hidden="true">✓</span>Direct line to dispatch &mdash; talk to a human, not a ticketing system.</li>
+          </ul>
+
+          <div class="portal__support">
+            <strong>Need a hand?</strong>
+            <p>Call <a href="tel:+61421201613">+61 421 201 613</a> or email <a href="mailto:hello@fencly.com.au">hello@fencly.com.au</a> &mdash; we're on Mon&ndash;Sat, 8:30&ndash;17:30 AEST.</p>
+          </div>
+        </div>
+
+        <form class="portal__form" id="portalLogin" novalidate>
+          <div class="form__head">
+            <span class="form__head-tag form__head-tag--gold">Trade Partner Login</span>
+            <span class="form__head-meta">Verified contractors only</span>
+          </div>
+
+          <div class="form__row form__row--float">
+            <input type="email" id="p_email" name="email" autocomplete="email" required placeholder=" " />
+            <label for="p_email">Trade email <em>*</em></label>
+          </div>
+          <div class="form__row form__row--float">
+            <input type="password" id="p_pass" name="password" autocomplete="current-password" required placeholder=" " />
+            <label for="p_pass">Password <em>*</em></label>
+          </div>
+
+          <div class="portal__form-row">
+            <label class="portal__remember"><input type="checkbox" name="remember" /> Remember me on this device</label>
+            <a href="mailto:hello@fencly.com.au?subject=Trade%20Portal%20Password%20Reset" class="portal__forgot">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--lg btn--block">
+            Sign in to Portal<span class="btn__arrow">→</span>
+          </button>
+
+          <p class="portal__form-note">
+            Portal access is limited to verified Fencly trade partners. By signing in you accept our partner terms &amp;
+            our <a href="warranty.html">25-year warranty</a> on supplied product.
+          </p>
+        </form>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer footer--mini" role="contentinfo">
+    <div class="container">
+      <p>© <span id="year"></span> Fencly Australia · ABN 69 554 363 962 · <a href="tel:+61421201613">+61 421 201 613</a> · <a href="mailto:hello@fencly.com.au">hello@fencly.com.au</a></p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('portalLogin').addEventListener('submit', function(e){
+      e.preventDefault();
+      alert('Portal authentication coming soon. For now please email hello@fencly.com.au for trade access.');
+    });
+  </script>
+</body>
+</html>

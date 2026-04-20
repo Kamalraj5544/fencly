@@ -36,9 +36,10 @@
       if (!reduce) {
         parallaxEls.forEach(el => {
           const rect = el.getBoundingClientRect();
+          if (rect.bottom < 0 || rect.top > window.innerHeight) return;
           const speed = parseFloat(el.dataset.speed || '0.3');
           const offset = (rect.top + rect.height / 2 - window.innerHeight / 2) * -speed;
-          el.style.setProperty('--py', offset.toFixed(1) + 'px');
+          el.style.setProperty('--py', Math.round(offset) + 'px');
         });
       }
 
@@ -254,24 +255,36 @@
       if (activeLink) placeIndicator(activeLink, false);
     });
 
-    // Track active section on scroll
-    if ('IntersectionObserver' in window) {
-      const sectionIds = ['features', 'products', 'performance', 'trade', 'contact'];
-      const sections = sectionIds
-        .map(id => document.getElementById(id))
-        .filter(Boolean);
-      const visibility = new Map();
-      const sio = new IntersectionObserver((entries) => {
-        entries.forEach(e => visibility.set(e.target.id, e.intersectionRatio));
-        // Pick the section with highest visibility ratio
-        let bestId = null, bestRatio = 0;
-        visibility.forEach((ratio, id) => {
-          if (ratio > bestRatio) { bestRatio = ratio; bestId = id; }
+    // Track active section on scroll — pick whichever section contains the
+    // trigger line (30% from the top of the viewport). This is robust against
+    // sections of wildly different heights, which intersection ratios are not.
+    const sectionIds = navLinks.map(a => a.dataset.section).filter(Boolean);
+    const sections = sectionIds
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+
+    if (sections.length) {
+      let spyTicking = false;
+      const updateActiveSection = () => {
+        const triggerY = window.innerHeight * 0.3;
+        let current = null;
+        for (const s of sections) {
+          const r = s.getBoundingClientRect();
+          if (r.top <= triggerY && r.bottom > triggerY) { current = s; break; }
+        }
+        setActiveSection(current ? current.id : null);
+      };
+      const onSpyScroll = () => {
+        if (spyTicking) return;
+        spyTicking = true;
+        requestAnimationFrame(() => {
+          updateActiveSection();
+          spyTicking = false;
         });
-        if (bestId && bestRatio > 0.15) setActiveSection(bestId);
-        else setActiveSection(null);
-      }, { threshold: [0, 0.15, 0.3, 0.5, 0.75, 1] });
-      sections.forEach(s => sio.observe(s));
+      };
+      window.addEventListener('scroll', onSpyScroll, { passive: true });
+      window.addEventListener('resize', onSpyScroll);
+      updateActiveSection();
     }
   }
 
@@ -414,7 +427,7 @@
   window.addEventListener('hashchange', activateFromHash);
   activateFromHash();
 
-  /* ---------- Contact form ---------- */
+  /* ---------- Quote form ---------- */
   const form = document.getElementById('contactForm');
   const note = document.getElementById('formNote');
   if (form) {
@@ -423,24 +436,81 @@
       const data = new FormData(form);
       const name = (data.get('name') || '').toString().trim();
       const email = (data.get('email') || '').toString().trim();
-      const message = (data.get('message') || '').toString().trim();
+      const phone = (data.get('phone') || '').toString().trim();
+      const postcode = (data.get('postcode') || '').toString().trim();
 
-      if (!name || !email || !message) {
-        note.textContent = 'Please fill in your name, email, and message.';
+      if (!name || !email || !phone || !postcode) {
+        note.textContent = 'Please add your name, mobile, email and postcode so we can quote you.';
         note.style.color = '#a84a2f';
         return;
       }
 
       const body = encodeURIComponent(
-        `Name: ${name}\nEmail: ${email}\nPhone: ${data.get('phone') || ''}\nBusiness: ${data.get('business') || ''}\n\n${message}`
+        `Name: ${name}\nMobile: ${phone}\nEmail: ${email}\n` +
+        `Suburb: ${data.get('suburb') || ''}\nPostcode: ${postcode}\n` +
+        `Project type: ${data.get('project') || ''}\nApprox length: ${data.get('length') || ''}\n\n` +
+        `${data.get('message') || ''}`
       );
-      const subject = encodeURIComponent('Fencly Trade Enquiry — ' + name);
+      const subject = encodeURIComponent('Fencly — Free Measure & Quote — ' + name + ' (' + postcode + ')');
       window.location.href = `mailto:hello@fencly.com.au?subject=${subject}&body=${body}`;
 
-      note.textContent = 'Opening your email client…';
+      note.textContent = 'Opening your email client… we usually reply within 4 business hours.';
       note.style.color = 'var(--c-text-soft)';
       form.reset();
     });
+  }
+
+  /* ---------- Sample-kit form ---------- */
+  const sForm = document.getElementById('sampleForm');
+  const sNote = document.getElementById('sampleFormNote');
+  if (sForm) {
+    sForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(sForm);
+      const name = (data.get('name') || '').toString().trim();
+      const phone = (data.get('phone') || '').toString().trim();
+      const address = (data.get('address') || '').toString().trim();
+      const postcode = (data.get('postcode') || '').toString().trim();
+
+      if (!name || !phone || !address || !postcode) {
+        sNote.textContent = 'Please fill in name, mobile, address and postcode so we can post your kit.';
+        sNote.style.color = '#a84a2f';
+        return;
+      }
+
+      const body = encodeURIComponent(
+        `Sample kit request:\n\nName: ${name}\nMobile: ${phone}\nAddress: ${address}\nPostcode: ${postcode}`
+      );
+      const subject = encodeURIComponent('Fencly — Free Sample Kit — ' + name + ' (' + postcode + ')');
+      window.location.href = `mailto:hello@fencly.com.au?subject=${subject}&body=${body}`;
+
+      sNote.textContent = 'Thanks — opening your email client. Tracking link will text the moment it ships.';
+      sNote.style.color = 'var(--c-text-soft)';
+      sForm.reset();
+    });
+  }
+
+  /* ---------- Comparison toggle ---------- */
+  const toggleBtns = document.querySelectorAll('.compare__toggle-btn');
+  const toggleRows = document.querySelectorAll('.compare__table tbody tr');
+  if (toggleBtns.length) {
+    const setView = (view) => {
+      toggleBtns.forEach(b => {
+        const on = b.dataset.view === view;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      // Lifetime view = show all rows. Upfront view = show only cost + warranty rows.
+      toggleRows.forEach(r => {
+        if (view === 'upfront') {
+          const keep = ['cost', 'warranty'];
+          r.style.display = keep.includes(r.dataset.row) ? '' : 'none';
+        } else {
+          r.style.display = '';
+        }
+      });
+    };
+    toggleBtns.forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
   }
 
   /* ---------- Year ---------- */

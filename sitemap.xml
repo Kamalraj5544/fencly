@@ -3,27 +3,28 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://fencly.com.au/</loc>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://fencly.com.au/images/hero.jpg</image:loc>
-      <image:title>Fencly — WPC Composite Fencing Australia</image:title>
+      <image:title>WPC Fence Sydney — Fencly Premium Co-Extruded Composite Fencing</image:title>
+      <image:caption>Premium co-extruded WPC fencing in Sydney — Parramatta, The Hills, Northern Beaches</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://fencly.com.au/images/p1-dual-tone.jpg</image:loc>
-      <image:title>Dual Tone Slat Wall — Fencly WPC Composite Fence</image:title>
+      <image:title>Dual Tone Slat Wall — Fencly WPC Composite Fence Sydney</image:title>
     </image:image>
     <image:image>
       <image:loc>https://fencly.com.au/images/p2-single-tone.jpg</image:loc>
-      <image:title>Single Tone Slat Wall — Fencly WPC Composite Fence</image:title>
+      <image:title>Single Tone Slat Wall — Fencly WPC Composite Fence Sydney</image:title>
     </image:image>
     <image:image>
       <image:loc>https://fencly.com.au/images/p4-privacy.jpg</image:loc>
-      <image:title>Privacy Fence — Fencly Zero-Gap WPC Composite Fence</image:title>
+      <image:title>Privacy WPC Fence — Fencly Zero-Gap Composite Fence</image:title>
     </image:image>
     <image:image>
       <image:loc>https://fencly.com.au/images/p5-carving.jpg</image:loc>
-      <image:title>Carving Fence — Fencly Laser-Cut Decorative Fence</image:title>
+      <image:title>Decorative Laser-Cut WPC Fence — Fencly Carving Fence</image:title>
     </image:image>
     <image:image>
       <image:loc>https://fencly.com.au/images/p6-super-kit.jpg</image:loc>
@@ -31,11 +32,21 @@
     </image:image>
     <image:image>
       <image:loc>https://fencly.com.au/images/p7-trellis.jpg</image:loc>
-      <image:title>Mid and Full Trellis — Fencly WPC Composite Trellis</image:title>
+      <image:title>WPC Trellis Fence — Fencly Mid &amp; Full Open-Board Trellis</image:title>
     </image:image>
     <image:image>
       <image:loc>https://fencly.com.au/images/p8-woven.jpg</image:loc>
-      <image:title>Woven Fence — Fencly Basket-Weave WPC Composite Fence</image:title>
+      <image:title>Woven WPC Fence — Fencly Basket-Weave Composite Fence</image:title>
     </image:image>
+  </url>
+  <url>
+    <loc>https://fencly.com.au/warranty.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://fencly.com.au/trade-portal.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset>
