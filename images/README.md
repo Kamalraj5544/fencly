@@ -17,6 +17,26 @@ Real product photography lives here. All images are fence installations (no gate
 | Product 08 · Woven | `p8-woven.jpg` | Light brown woven WPC boundary fence |
 | Product 09 · Gates | _placeholder_ | Gate imagery pending — CSS placeholder in use |
 
+## Privacy Fence gallery (5 swipeable slides)
+
+The Privacy Fence product panel now displays a swipeable gallery wired to
+these files:
+
+| Slide | File | What it shows |
+|---|---|---|
+| 1 · Installed | `p4-privacy-installed.jpg` | Charcoal horizontal-slat fence in a residential backyard |
+| 2 · Texture | `p4-privacy-texture.jpg` | Close-up of co-extruded WPC wood-grain surface (charcoal) |
+| 3 · Colour · Teak | `p4-privacy-teak.jpg` | Teak colourway with black aluminium posts |
+| 4 · Colour · Charcoal | `p4-privacy-charcoal.jpg` | Full-coverage charcoal solid privacy panels |
+| 5 · Configuration | `p4-privacy-mixed.jpg` | Slat-top + solid-bottom configuration in teak |
+
+`p4-privacy.jpg` is kept as the SEO/Open Graph hero image and is a copy of
+slide 1 (`p4-privacy-installed.jpg`).
+
+To swap any slide, just overwrite the file in this folder — no markup change
+needed.
+
+
 ## Where they're wired
 
 - Hero: `.hero__bg-image` in `css/styles.css`

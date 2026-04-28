@@ -427,6 +427,46 @@
   window.addEventListener('hashchange', activateFromHash);
   activateFromHash();
 
+  /* ---------- Product image gallery (swipeable) ---------- */
+  document.querySelectorAll('[data-gallery]').forEach(gallery => {
+    const track = gallery.querySelector('[data-gallery-track]');
+    const slides = Array.from(gallery.querySelectorAll('.panel__slide'));
+    const dots = Array.from(gallery.querySelectorAll('.panel__gallery-dot'));
+    const prev = gallery.querySelector('[data-gallery-nav="prev"]');
+    const next = gallery.querySelector('[data-gallery-nav="next"]');
+    if (!track || slides.length < 2) return;
+
+    const goTo = (idx) => {
+      const clamped = (idx + slides.length) % slides.length;
+      const slide = slides[clamped];
+      if (!slide) return;
+      track.scrollTo({ left: slide.offsetLeft, behavior: 'smooth' });
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === clamped));
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === clamped));
+    };
+
+    const currentIndex = () => {
+      const w = track.clientWidth || 1;
+      return Math.round(track.scrollLeft / w);
+    };
+
+    prev?.addEventListener('click', () => goTo(currentIndex() - 1));
+    next?.addEventListener('click', () => goTo(currentIndex() + 1));
+    dots.forEach((d, i) => d.addEventListener('click', () => goTo(i)));
+
+    let scrollTick = false;
+    track.addEventListener('scroll', () => {
+      if (scrollTick) return;
+      scrollTick = true;
+      requestAnimationFrame(() => {
+        const idx = currentIndex();
+        slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+        dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+        scrollTick = false;
+      });
+    }, { passive: true });
+  });
+
   /* ---------- Quote form ---------- */
   const form = document.getElementById('contactForm');
   const note = document.getElementById('formNote');
