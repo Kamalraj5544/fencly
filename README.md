@@ -1,8 +1,8 @@
 # Fencly — Static Website
 
-A production-ready marketing site for **Fencly**, a premium WPC composite fencing brand trading into Australia out of Sydney.
+Marketing site for Fencly, a Sydney-based WPC composite fencing supplier.
 
-Built with **HTML, CSS, and vanilla JavaScript**. No frameworks. No build step.
+Plain HTML, CSS and vanilla JS. No framework, no build step.
 
 ---
 
@@ -74,19 +74,16 @@ fencly-website/
 
 ## What's included
 
-- **Hero** with cinematic gradient background, animated tagline underline, scroll indicator
-- **Trust marquee** (infinite-scroll ticker)
-- **Bento-grid features** (6 cards, one oversized)
-- **Tabbed product showcase** covering all 9 products with:
-  - Full specs, included components, colour swatches
-  - Keyboard navigation (←/→)
-  - URL hash deep-linking (`#p3` opens FlowShield)
-- **Colour palette** showcase (12 finishes, dual-tone, dark section)
-- **Performance data** table + certification logos (Intertek, SGS, ISO 9001, FSC, Green Label, REACH)
-- **Delivery timeline** (4-step)
-- **Trade Partnership** (6-card grid, prominent CTA)
-- **Contact form** (mailto-based, zero backend)
-- **Footer** with product index, company links, socials
+- Hero, trust marquee, features grid
+- Tabbed product showcase (Privacy Fence, Mid Trellis, Full Trellis in stock; others commented out)
+  - Image carousel per product, keyboard navigation, hash deep-linking (`#p4`, `#p7`, `#p9`)
+- Why-co-extrusion section with cross-section diagram
+- Cost comparison table (Fencly vs timber vs Colorbond)
+- Performance / test results
+- Delivery timeline
+- Trade pricing section
+- Trade sample-set form (ABN required) and free measure-and-quote form
+- Footer with product index, service areas, contact
 
 ---
 

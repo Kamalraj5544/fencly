@@ -1,25 +1,6 @@
-/* =============================================================
-   FENCLY · main.js
-   Navigation, scroll FX, reveals, counters, tabs, form
-   ============================================================= */
-
-/* -------------------------------------------------------------
-   FORM ENDPOINT CONFIG
-   -----------------------------------------------------------
-   FENCLY_FORM_ENDPOINT receives every form submission. The site
-   is wired for a Google Apps Script Web App that:
-     1. Appends the row to a Google Sheet
-     2. Emails the company a notification with all fields
-     3. Emails the requester a branded thank-you
-
-   Setup is documented in `apps-script/README.md`. Paste the
-   deployed Web App URL below. Format looks like:
-
-     https://script.google.com/macros/s/AKfycbx.../exec
-
-   If left empty, forms fall back to opening the user's mail
-   client (mailto:) so the site keeps working.
-   ----------------------------------------------------------- */
+/* fencly · main.js
+   Form submissions go to FENCLY_FORM_ENDPOINT (Google Apps Script Web App).
+   See apps-script/README.md for setup. If left empty, falls back to mailto. */
 const FENCLY_FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzC5IeaBTBlfUALBtmE8irIjilLHYKC33Rv-AgiM6zP7uAZfH0rk3tlCTrWXRi5wed-/exec';
 const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
 
@@ -526,7 +507,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
     } else if (state === 'success') {
       btn.disabled = true;
       btn.classList.add('is-success');
-      btn.innerHTML = '✓ Sent — we\'ll be in touch';
+      btn.innerHTML = '✓ Sent. We\'ll be in touch.';
     } else {
       btn.disabled = false;
       btn.innerHTML = label;
@@ -609,7 +590,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       const colour = (data.get('colour') || '').toString().trim();
       const message = (data.get('message') || '').toString().trim();
 
-      const subject = `Fencly — Free Measure & Quote — ${name} (${postcode})`;
+      const subject = `Fencly free measure & quote: ${name} (${postcode})`;
       const mailtoUrl = buildMailto(subject, [
         `Name: ${name}`,
         `Mobile: ${phone}`,
@@ -648,13 +629,13 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       submitting = false;
 
       if (result.ok) {
-        setNote(note, 'Thanks — we\'ve got your details and will reply within 4 business hours.', 'is-success');
+        setNote(note, 'Thanks, we\'ve got your details and will reply within 4 business hours.', 'is-success');
         form.reset();
         setBtnState(btn, 'success');
         setTimeout(() => setBtnState(btn, 'idle', original), 10000);
       } else {
         handleFallback(note, btn, original, mailtoUrl,
-          'Something went wrong sending that. Tap below to email us directly — your details are safe.');
+          'Something went wrong sending that. Tap below to email us directly. Your details are safe.');
       }
     });
   }
@@ -670,7 +651,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       if (sSubmitting) return;
       const invalid = validateRequired(sForm, ['name', 'email', 'business', 'abn', 'phone', 'address', 'postcode']);
       if (invalid) {
-        setNote(sNote, 'Please check the highlighted fields — trade sample sets require a verified ABN.', 'is-error');
+        setNote(sNote, 'Please check the highlighted fields. Trade sample sets require a verified ABN.', 'is-error');
         invalid.focus();
         return;
       }
@@ -685,7 +666,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       const address = data.get('address').toString().trim();
       const postcode = data.get('postcode').toString().trim();
 
-      const subject = `Fencly — Trade Sample Set — ${business || name} (ABN ${abn})`;
+      const subject = `Fencly trade sample set: ${business || name} (ABN ${abn})`;
       const mailtoUrl = buildMailto(subject, [
         'Trade sample set request:',
         '',
@@ -709,7 +690,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
 
       if (!FENCLY_FORM_ENDPOINT) {
         window.location.href = mailtoUrl;
-        setNote(sNote, 'Thanks — opening your email client. We\'ll text the tracking link the moment it ships.', 'is-success');
+        setNote(sNote, 'Thanks. Opening your email client. We\'ll text the tracking link the moment it ships.', 'is-success');
         sForm.reset();
         setBtnState(btn, 'success');
         setTimeout(() => setBtnState(btn, 'idle', original), 8000);
@@ -723,13 +704,13 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       sSubmitting = false;
 
       if (result.ok) {
-        setNote(sNote, 'Thanks — your sample kit is being packed. We\'ll text the tracking link the moment it ships.', 'is-success');
+        setNote(sNote, 'Thanks, your sample set is being packed. We\'ll text the tracking link the moment it ships.', 'is-success');
         sForm.reset();
         setBtnState(btn, 'success');
         setTimeout(() => setBtnState(btn, 'idle', original), 10000);
       } else {
         handleFallback(sNote, btn, original, mailtoUrl,
-          'Something went wrong sending that. Tap below to email us directly — your details are safe.');
+          'Something went wrong sending that. Tap below to email us directly. Your details are safe.');
       }
     });
   }

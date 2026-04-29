@@ -112,8 +112,8 @@ function appendRow(formType, p) {
 
 function sendCompanyEmail(formType, p) {
   const subject = formType === 'quote'
-    ? `New Quote Request — ${p.name || 'Anonymous'} (${p.postcode || '—'})`
-    : `New Sample Kit Request — ${p.name || 'Anonymous'} (${p.postcode || '—'})`;
+    ? `New Quote Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`
+    : `New Sample Set Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`;
 
   const rows = formType === 'quote' ? [
     ['Name',        p.name],
@@ -168,12 +168,12 @@ function sendCompanyEmail(formType, p) {
 
 function sendThankYouEmail(formType, p) {
   const subject = formType === 'quote'
-    ? `Thanks ${firstName(p.name)} — your Fencly quote is in the queue`
-    : `Thanks ${firstName(p.name)} — your free Fencly sample kit is on the way`;
+    ? `Thanks ${firstName(p.name)}, your Fencly quote is in the queue`
+    : `Thanks ${firstName(p.name)}, your Fencly sample set is on the way`;
 
   const intro = formType === 'quote'
-    ? `Thanks for getting in touch. Your free measure & quote request is in front of our Sydney team — we usually reply within ${CONFIG.REPLY_HOURS}.`
-    : `Thanks for requesting a free sample kit. We're packing 6 real co-extruded WPC boards and posting them to you across Sydney metro within 2–4 business days.`;
+    ? `Thanks for getting in touch. Your free measure and quote request is in front of our Sydney team. We usually reply within ${CONFIG.REPLY_HOURS}.`
+    : `Thanks for requesting a sample set. We're packing real co-extruded WPC boards and posting them to you within 2–4 business days.`;
 
   const summary = formType === 'quote' ? [
     ['Postcode', p.postcode],
@@ -193,7 +193,7 @@ function sendThankYouEmail(formType, p) {
   <div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:560px;margin:0 auto;background:#F5F0E8;padding:32px 24px;color:#2C1810">
     <div style="text-align:center;margin-bottom:24px">
       <div style="font-family:Georgia,serif;font-style:italic;font-size:32px;color:#2C1810">${escapeHtml(CONFIG.COMPANY_NAME)}</div>
-      <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#7a6f64;margin-top:2px">Premium WPC Composite Fencing</div>
+      <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#7a6f64;margin-top:2px">WPC Composite Fencing · Sydney</div>
     </div>
 
     <div style="background:#fff;border-radius:12px;padding:28px 24px;border:1px solid #e8dfd1">

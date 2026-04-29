@@ -1,11 +1,11 @@
-# Fencly Australia — robots.txt
+# Fencly Australia
 # https://fencly.com.au/
 
 User-agent: *
 Allow: /
 Disallow:
 
-# Block common AI scraper traffic (optional — remove if you want AI visibility)
+# To block AI scrapers, uncomment:
 # User-agent: GPTBot
 # Disallow: /
 
