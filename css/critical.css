@@ -35,7 +35,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 @media(max-width:900px){.nav__pill,.nav__cta{display:none}.nav__toggle{display:flex}.nav__inner{padding:6px 6px 6px 16px}}
 .hero{position:relative;min-height:100vh;min-height:100svh;min-height:100dvh;display:flex;align-items:center;color:var(--c-cream);overflow:hidden;padding:140px 0 100px}
 .hero__bg{position:absolute;inset:0;z-index:0;overflow:hidden}
-.hero__bg-image{position:absolute;inset:0;background-color:#3B2418;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:radial-gradient(ellipse at 75% 30%,rgba(212,168,67,0.22),transparent 55%),radial-gradient(ellipse at 15% 85%,rgba(59,36,24,0.55),transparent 55%),linear-gradient(145deg,rgba(18,8,4,0.55) 0%,rgba(44,24,16,0.4) 45%,rgba(59,36,24,0.35) 100%),url('../images/hero.jpg')}
+.hero__bg-image{position:absolute;inset:0;background-color:#3B2418;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:radial-gradient(ellipse at 75% 30%,rgba(212,168,67,0.22),transparent 55%),radial-gradient(ellipse at 15% 85%,rgba(59,36,24,0.55),transparent 55%),linear-gradient(145deg,rgba(18,8,4,0.55) 0%,rgba(44,24,16,0.4) 45%,rgba(59,36,24,0.35) 100%),url('data:image/webp;base64,UklGRtAAAABXRUJQVlA4IMQAAABQBQCdASogABUAPsFOpEyno6OiMBgIAPAYCWIAACjePKjnoIuUyObkub1qreecPU9IzoAA/tf7WkoP7S8qmJbu11vUuMQ7MSAhHkXHyqg8gt/c+BtAv8S3zPqzMNWf13Je5ARVjDVn8y3O+6TZW47sQWSSj+nqIgn+cASuLieiaOy05u8/S/KHS8ttSFIvYo7rWTr83OccV8EZCm1OH8K+HjU/1yPQCXINqjxlMQvcpX8rRKXQRv0xxN26sxgIjvgleAAA')}
 @supports(background-image:image-set(url('a.webp') type('image/webp'))){.hero__bg-image{background-image:radial-gradient(ellipse at 75% 30%,rgba(212,168,67,0.22),transparent 55%),radial-gradient(ellipse at 15% 85%,rgba(59,36,24,0.55),transparent 55%),linear-gradient(145deg,rgba(18,8,4,0.55) 0%,rgba(44,24,16,0.4) 45%,rgba(59,36,24,0.35) 100%),image-set(url('../images/hero.webp') type('image/webp'),url('../images/hero.jpg') type('image/jpeg'))}}
 .hero__bg-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(26,14,8,0.65) 100%);pointer-events:none}
 .hero__bg-grain,.hero__beam{display:none}
@@ -57,5 +57,8 @@ ul,ol{margin:0;padding:0;list-style:none}
 .split{display:inline-block}
 .word{display:inline-block;overflow:hidden;vertical-align:bottom}
 .word>span{display:inline-block}
+/* Force above-the-fold visible on first paint — overrides any later reveal/split CSS */
+.hero .reveal,.hero[data-reveal],.hero [data-reveal],.hero .split,.hero [data-split]{opacity:1!important;transform:none!important;clip-path:none!important}
+.hero .split .word>span{transform:none!important}
 [data-reveal]{opacity:1}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

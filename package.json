@@ -7,6 +7,8 @@
     "build:css": "lightningcss-cli --minify css/styles.css -o css/styles.min.css",
     "build:js": "terser js/main.js -c -m -o js/main.min.js",
     "build:fonts": "python _self_host_fonts.py && lightningcss-cli --minify css/fonts.css -o css/fonts.css",
+    "build:lqip": "python _make_lqip.py",
+    "build:critical": "lightningcss-cli --minify css/critical.css -o css/critical.min.css",
     "optimize:images": "python _optimize_images.py",
     "build": "npm run build:css && npm run build:js"
   },
