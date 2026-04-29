@@ -21,28 +21,30 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
+      // PHASE 1: all layout reads up front (avoids forced reflow)
       const y = window.scrollY;
-      const docH = document.documentElement.scrollHeight - window.innerHeight;
-
-      // Nav
-      nav.classList.toggle('is-scrolled', y > 40);
-
-      // Progress
-      if (progressBar && docH > 0) {
-        const pct = Math.min(100, (y / docH) * 100);
-        progressBar.style.width = pct + '%';
-      }
-
-      // Parallax
+      const winH = window.innerHeight;
+      const docH = document.documentElement.scrollHeight - winH;
+      const parallaxData = [];
       if (!reduce) {
         parallaxEls.forEach(el => {
           const rect = el.getBoundingClientRect();
-          if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-          const speed = parseFloat(el.dataset.speed || '0.3');
-          const offset = (rect.top + rect.height / 2 - window.innerHeight / 2) * -speed;
-          el.style.setProperty('--py', Math.round(offset) + 'px');
+          if (rect.bottom < 0 || rect.top > winH) return;
+          parallaxData.push({ el, rect });
         });
       }
+
+      // PHASE 2: all writes
+      nav.classList.toggle('is-scrolled', y > 40);
+      if (progressBar && docH > 0) {
+        const pct = Math.min(1, y / docH);
+        progressBar.style.transform = `scaleX(${pct})`;
+      }
+      parallaxData.forEach(({ el, rect }) => {
+        const speed = parseFloat(el.dataset.speed || '0.3');
+        const offset = (rect.top + rect.height / 2 - winH / 2) * -speed;
+        el.style.setProperty('--py', Math.round(offset) + 'px');
+      });
 
       ticking = false;
     });

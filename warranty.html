@@ -28,7 +28,12 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600&family=Inter+Tight:wght@300;400;500;600;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <!-- Critical CSS -->
+  <style>:root{--c-dark:#2c1810;--c-dark-2:#3b2418;--c-gold:#d4a843;--c-gold-soft:#e2c075;--c-cream:#f5f0e8;--c-text:#1a1a1a;--c-text-soft:#5a4f45;--f-display:"Fraunces","Playfair Display",Georgia,serif;--f-sans:"Inter Tight","DM Sans",system-ui,-apple-system,sans-serif;--ease:cubic-bezier(.22,1,.36,1);--container:1280px}*,:before,:after{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}body{font-family:var(--f-sans);color:var(--c-text);background:var(--c-cream);-webkit-font-smoothing:antialiased;margin:0;font-size:16px;line-height:1.6;overflow-x:hidden}img,svg{max-width:100%;display:block}a{color:inherit;text-decoration:none}h1,h2,h3,h4,h5{margin:0;font-weight:500;line-height:1.1}p{margin:0}.skip-link{background:var(--c-dark);color:var(--c-cream);z-index:1000;padding:10px 16px;position:absolute;top:0;left:-9999px}.skip-link:focus{left:0}.scroll-progress{z-index:110;background:#f5f0e80f;height:2px;position:fixed;top:0;left:0;right:0}.scroll-progress__bar{background:linear-gradient(90deg,var(--c-gold),var(--c-gold-soft));width:0;height:100%;display:block}.container{width:100%;max-width:var(--container);margin:0 auto;padding:0 clamp(20px,4vw,48px)}.nav{z-index:100;pointer-events:none;padding:0 clamp(16px,3vw,32px);position:fixed;top:16px;left:0;right:0}.nav>*{pointer-events:auto}.nav__inner{-webkit-backdrop-filter:blur(20px)saturate(160%);background:#1a0e088c;border:1px solid #f5f0e81a;border-radius:999px;justify-content:space-between;align-items:center;gap:12px;max-width:1240px;margin:0 auto;padding:8px 8px 8px 18px;display:flex;box-shadow:0 10px 30px #0003}.nav__logo{color:var(--c-cream);flex-shrink:0;align-items:center;gap:10px;display:inline-flex}.nav__logo-mark{background-color:var(--c-cream);flex-shrink:0;width:124px;height:36px;display:block;-webkit-mask:url(../images/logo.png) 50%/contain no-repeat;mask:url(../images/logo.png) 50%/contain no-repeat}.nav__logo-word{display:none}.nav__cta{color:var(--c-cream);white-space:nowrap;background:0 0;border:1px solid #f5f0e859;border-radius:999px;align-items:center;gap:10px;padding:5px 6px 5px 18px;font-size:.86rem;font-weight:500;display:inline-flex}.nav__cta-icon{width:30px;height:30px;color:var(--c-cream);border:1px solid #f5f0e8b3;border-radius:50%;place-items:center;display:grid}.nav__cta-icon svg{width:14px;height:14px}.nav__toggle{background:#f5f0e80f;border:1px solid #f5f0e814;border-radius:999px;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:42px;height:42px;display:none}.nav__toggle span{background:var(--c-cream);width:16px;height:1.5px}.nav__mobile{display:none}@media (max-width:1080px){.nav__cta-label{display:none}.nav__cta{min-width:44px;min-height:44px;background:0 0;border:none;justify-content:center;padding:0}.nav__cta-icon{width:38px;height:38px}}@media (max-width:900px){.nav__cta{display:none}.nav__toggle{display:flex}}</style>
+
+  <!-- Defer rest of CSS -->
+  <link rel="preload" href="css/styles.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="css/styles.min.css" /></noscript>
 
   <script type="application/ld+json">
   {
@@ -49,7 +54,7 @@
   <header class="nav" id="nav" role="banner">
     <div class="nav__inner">
       <a href="index.html" class="nav__logo" aria-label="Fencly home">
-        <img src="images/logo.png" alt="" class="nav__logo-mark" width="40" height="40" />
+        <span class="nav__logo-mark" aria-hidden="true"></span>
         <span class="nav__logo-word">Fencly</span>
       </a>
 
@@ -62,6 +67,20 @@
           </svg>
         </span>
       </a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="Toggle menu">
+        <span></span><span></span>
+      </button>
+    </div>
+
+    <div class="nav__mobile" id="mobileMenu" hidden>
+      <a href="index.html#products">Products</a>
+      <a href="index.html#homeowners">Homeowners</a>
+      <a href="index.html#trade">Trade</a>
+      <a href="index.html#quote">Contact</a>
+      <a href="warranty.html">15-Year Warranty</a>
+      <a href="tel:+61421201613" class="nav__mobile-phone">Call +61 421 201 613</a>
+      <a href="index.html#quote" class="btn btn--primary">Get a Same-Day Quote</a>
     </div>
   </header>
 
@@ -266,6 +285,6 @@
   </footer>
 
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
-  <script src="js/main.js" defer></script>
+  <script src="js/main.min.js" defer></script>
 </body>
 </html>
