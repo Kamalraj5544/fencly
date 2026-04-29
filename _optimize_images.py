@@ -10,7 +10,8 @@ import shutil
 from PIL import Image
 
 ROOT = Path(__file__).parent / "images"
-BACKUP = ROOT / "_originals"
+# Backup lives outside the deploy path so it isn't shipped to production.
+BACKUP = Path(__file__).parent / "_originals_backup"
 MAX_W, MAX_H = 1600, 1000
 JPG_QUALITY = 82
 WEBP_QUALITY = 80
