@@ -680,7 +680,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       ]);
 
       const payload = {
-        form: 'trade-sample-set',
+        form: 'sample-kit',
         name, email, business, abn, phone, address, postcode,
         _subject: subject,
         _replyto: email,

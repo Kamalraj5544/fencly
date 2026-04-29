@@ -31,8 +31,8 @@ const CONFIG = {
   HEADERS: {
     quote: ['Submitted', 'Name', 'Email', 'Mobile', 'Suburb', 'Postcode',
             'Project Type', 'Approx Length', 'Message', 'Page', 'IP'],
-    'sample-kit': ['Submitted', 'Name', 'Email', 'Mobile', 'Address',
-                   'Postcode', 'Page', 'IP']
+    'sample-kit': ['Submitted', 'Name', 'Email', 'Business', 'ABN', 'Mobile',
+                   'Address', 'Postcode', 'Page', 'IP']
   }
 };
 
@@ -100,8 +100,9 @@ function appendRow(formType, p) {
            p.suburb || '', p.postcode || '', p.project || '',
            p.length || '', p.message || '', p.page || '', '—'];
   } else {
-    row = [submitted, p.name || '', p.email || '', p.phone || '',
-           p.address || '', p.postcode || '', p.page || '', '—'];
+    row = [submitted, p.name || '', p.email || '', p.business || '',
+           p.abn || '', p.phone || '', p.address || '', p.postcode || '',
+           p.page || '', '—'];
   }
   sheet.appendRow(row);
 }
@@ -127,6 +128,8 @@ function sendCompanyEmail(formType, p) {
   ] : [
     ['Name',     p.name],
     ['Email',    p.email],
+    ['Business', p.business],
+    ['ABN',      p.abn],
     ['Mobile',   p.phone],
     ['Address',  p.address],
     ['Postcode', p.postcode]
@@ -180,6 +183,8 @@ function sendThankYouEmail(formType, p) {
     ['Project',  p.project],
     ['Approx length', p.length]
   ] : [
+    ['Business', p.business],
+    ['ABN',      p.abn],
     ['Address',  p.address],
     ['Postcode', p.postcode]
   ];

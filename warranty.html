@@ -44,14 +44,23 @@
 <body class="page-warranty">
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <header class="nav nav--solid" id="nav" role="banner">
+  <div class="scroll-progress" aria-hidden="true"><span class="scroll-progress__bar"></span></div>
+
+  <header class="nav" id="nav" role="banner">
     <div class="nav__inner">
       <a href="index.html" class="nav__logo" aria-label="Fencly home">
         <img src="images/logo.png" alt="" class="nav__logo-mark" width="40" height="40" />
         <span class="nav__logo-word">Fencly</span>
       </a>
+
       <a href="index.html#quote" class="nav__cta">
         <span class="nav__cta-label">Free Measure &amp; Quote</span>
+        <span class="nav__cta-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16">
+            <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </span>
       </a>
     </div>
   </header>
@@ -257,5 +266,6 @@
   </footer>
 
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>
