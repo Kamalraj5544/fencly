@@ -3,6 +3,26 @@
    Navigation, scroll FX, reveals, counters, tabs, form
    ============================================================= */
 
+/* -------------------------------------------------------------
+   FORM ENDPOINT CONFIG
+   -----------------------------------------------------------
+   FENCLY_FORM_ENDPOINT receives every form submission. The site
+   is wired for a Google Apps Script Web App that:
+     1. Appends the row to a Google Sheet
+     2. Emails the company a notification with all fields
+     3. Emails the requester a branded thank-you
+
+   Setup is documented in `apps-script/README.md`. Paste the
+   deployed Web App URL below. Format looks like:
+
+     https://script.google.com/macros/s/AKfycbx.../exec
+
+   If left empty, forms fall back to opening the user's mail
+   client (mailto:) so the site keeps working.
+   ----------------------------------------------------------- */
+const FENCLY_FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzC5IeaBTBlfUALBtmE8irIjilLHYKC33Rv-AgiM6zP7uAZfH0rk3tlCTrWXRi5wed-/exec';
+const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
+
 (() => {
   'use strict';
 
@@ -467,36 +487,175 @@
     }, { passive: true });
   });
 
+  /* ---------- Form helpers ---------- */
+  const setNote = (note, text, state) => {
+    if (!note) return;
+    note.textContent = text;
+    note.classList.remove('is-error', 'is-success');
+    if (state) note.classList.add(state);
+    note.style.color = '';
+  };
+  const markFieldError = (input, on) => {
+    const row = input && input.closest('.form__row');
+    if (row) row.classList.toggle('is-error', !!on);
+  };
+  const validateRequired = (formEl, fieldNames) => {
+    let firstInvalid = null;
+    fieldNames.forEach(name => {
+      const input = formEl.querySelector(`[name="${name}"]`);
+      if (!input) return;
+      const value = (input.value || '').trim();
+      const valid = !!value && (input.checkValidity ? input.checkValidity() : true);
+      markFieldError(input, !valid);
+      if (!valid && !firstInvalid) firstInvalid = input;
+    });
+    return firstInvalid;
+  };
+  const clearErrorsOnInput = (formEl) => {
+    formEl.querySelectorAll('input, textarea').forEach(el => {
+      el.addEventListener('input', () => markFieldError(el, false));
+    });
+  };
+  const setBtnState = (btn, state, label) => {
+    if (!btn) return;
+    btn.classList.remove('is-loading', 'is-success');
+    if (state === 'loading') {
+      btn.disabled = true;
+      btn.classList.add('is-loading');
+      btn.innerHTML = '<span class="btn__spinner" aria-hidden="true"></span> Sending…';
+    } else if (state === 'success') {
+      btn.disabled = true;
+      btn.classList.add('is-success');
+      btn.innerHTML = '✓ Sent — we\'ll be in touch';
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = label;
+    }
+  };
+
+  const buildMailto = (subject, lines) => {
+    const body = encodeURIComponent(lines.filter(Boolean).join('\n'));
+    return `mailto:${FENCLY_FALLBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${body}`;
+  };
+
+  const postLead = async (payload) => {
+    if (!FENCLY_FORM_ENDPOINT) {
+      return { ok: false, reason: 'no-endpoint' };
+    }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      // text/plain body avoids a CORS preflight — required for Google Apps Script
+      // web apps. The handler still parses it as JSON server-side.
+      const res = await fetch(FENCLY_FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+      if (!res.ok) return { ok: false, reason: 'http-' + res.status };
+      try {
+        const json = await res.json();
+        if (json && json.ok === false) return { ok: false, reason: json.error || 'server' };
+      } catch (_) { /* non-JSON response — treat 2xx as success */ }
+      return { ok: true };
+    } catch (err) {
+      clearTimeout(timeout);
+      return { ok: false, reason: err.name === 'AbortError' ? 'timeout' : 'network' };
+    }
+  };
+
+  const handleFallback = (note, btn, originalLabel, mailtoUrl, fallbackMessage) => {
+    setNote(note, fallbackMessage, 'is-error');
+    setBtnState(btn, 'idle', 'Email us instead →');
+    if (btn) {
+      const mailtoHandler = (e) => {
+        e.preventDefault();
+        window.location.href = mailtoUrl;
+      };
+      btn.addEventListener('click', mailtoHandler, { once: true });
+    }
+    setTimeout(() => {
+      setBtnState(btn, 'idle', originalLabel);
+    }, 12000);
+  };
+
   /* ---------- Quote form ---------- */
   const form = document.getElementById('contactForm');
   const note = document.getElementById('formNote');
   if (form) {
-    form.addEventListener('submit', (e) => {
+    clearErrorsOnInput(form);
+    let submitting = false;
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (submitting) return;
+      const invalid = validateRequired(form, ['name', 'email', 'phone', 'postcode']);
+      if (invalid) {
+        setNote(note, 'Please check the highlighted fields so we can quote you.', 'is-error');
+        invalid.focus();
+        return;
+      }
+      const btn = form.querySelector('button[type="submit"]');
+      const original = btn ? btn.innerHTML : '';
       const data = new FormData(form);
-      const name = (data.get('name') || '').toString().trim();
-      const email = (data.get('email') || '').toString().trim();
-      const phone = (data.get('phone') || '').toString().trim();
-      const postcode = (data.get('postcode') || '').toString().trim();
+      const name = data.get('name').toString().trim();
+      const email = data.get('email').toString().trim();
+      const phone = data.get('phone').toString().trim();
+      const postcode = data.get('postcode').toString().trim();
+      const suburb = (data.get('suburb') || '').toString().trim();
+      const project = (data.get('project') || '').toString().trim();
+      const length = (data.get('length') || '').toString().trim();
+      const colour = (data.get('colour') || '').toString().trim();
+      const message = (data.get('message') || '').toString().trim();
 
-      if (!name || !email || !phone || !postcode) {
-        note.textContent = 'Please add your name, mobile, email and postcode so we can quote you.';
-        note.style.color = '#a84a2f';
+      const subject = `Fencly — Free Measure & Quote — ${name} (${postcode})`;
+      const mailtoUrl = buildMailto(subject, [
+        `Name: ${name}`,
+        `Mobile: ${phone}`,
+        `Email: ${email}`,
+        `Suburb: ${suburb}`,
+        `Postcode: ${postcode}`,
+        `Project type: ${project}`,
+        `Approx length: ${length}`,
+        `Preferred colour: ${colour || '(not specified)'}`,
+        '',
+        message
+      ]);
+
+      const payload = {
+        form: 'quote',
+        name, email, phone, postcode, suburb, project, length, colour, message,
+        _subject: subject,
+        _replyto: email,
+        page: location.href,
+        submitted_at: new Date().toISOString()
+      };
+
+      if (!FENCLY_FORM_ENDPOINT) {
+        window.location.href = mailtoUrl;
+        setNote(note, 'Opening your email client… we usually reply within 4 business hours.', 'is-success');
+        form.reset();
+        setBtnState(btn, 'success');
+        setTimeout(() => setBtnState(btn, 'idle', original), 8000);
         return;
       }
 
-      const body = encodeURIComponent(
-        `Name: ${name}\nMobile: ${phone}\nEmail: ${email}\n` +
-        `Suburb: ${data.get('suburb') || ''}\nPostcode: ${postcode}\n` +
-        `Project type: ${data.get('project') || ''}\nApprox length: ${data.get('length') || ''}\n\n` +
-        `${data.get('message') || ''}`
-      );
-      const subject = encodeURIComponent('Fencly — Free Measure & Quote — ' + name + ' (' + postcode + ')');
-      window.location.href = `mailto:hello@fencly.com.au?subject=${subject}&body=${body}`;
+      submitting = true;
+      setBtnState(btn, 'loading');
+      setNote(note, 'Sending your details…');
+      const result = await postLead(payload);
+      submitting = false;
 
-      note.textContent = 'Opening your email client… we usually reply within 4 business hours.';
-      note.style.color = 'var(--c-text-soft)';
-      form.reset();
+      if (result.ok) {
+        setNote(note, 'Thanks — we\'ve got your details and will reply within 4 business hours.', 'is-success');
+        form.reset();
+        setBtnState(btn, 'success');
+        setTimeout(() => setBtnState(btn, 'idle', original), 10000);
+      } else {
+        handleFallback(note, btn, original, mailtoUrl,
+          'Something went wrong sending that. Tap below to email us directly — your details are safe.');
+      }
     });
   }
 
@@ -504,29 +663,74 @@
   const sForm = document.getElementById('sampleForm');
   const sNote = document.getElementById('sampleFormNote');
   if (sForm) {
-    sForm.addEventListener('submit', (e) => {
+    clearErrorsOnInput(sForm);
+    let sSubmitting = false;
+    sForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (sSubmitting) return;
+      const invalid = validateRequired(sForm, ['name', 'email', 'business', 'abn', 'phone', 'address', 'postcode']);
+      if (invalid) {
+        setNote(sNote, 'Please check the highlighted fields — trade sample sets require a verified ABN.', 'is-error');
+        invalid.focus();
+        return;
+      }
+      const btn = sForm.querySelector('button[type="submit"]');
+      const original = btn ? btn.innerHTML : '';
       const data = new FormData(sForm);
-      const name = (data.get('name') || '').toString().trim();
-      const phone = (data.get('phone') || '').toString().trim();
-      const address = (data.get('address') || '').toString().trim();
-      const postcode = (data.get('postcode') || '').toString().trim();
+      const name = data.get('name').toString().trim();
+      const email = data.get('email').toString().trim();
+      const business = (data.get('business') || '').toString().trim();
+      const abn = (data.get('abn') || '').toString().trim();
+      const phone = data.get('phone').toString().trim();
+      const address = data.get('address').toString().trim();
+      const postcode = data.get('postcode').toString().trim();
 
-      if (!name || !phone || !address || !postcode) {
-        sNote.textContent = 'Please fill in name, mobile, address and postcode so we can post your kit.';
-        sNote.style.color = '#a84a2f';
+      const subject = `Fencly — Trade Sample Set — ${business || name} (ABN ${abn})`;
+      const mailtoUrl = buildMailto(subject, [
+        'Trade sample set request:',
+        '',
+        `Business: ${business}`,
+        `ABN: ${abn}`,
+        `Contact: ${name}`,
+        `Email: ${email}`,
+        `Mobile: ${phone}`,
+        `Address: ${address}`,
+        `Postcode: ${postcode}`
+      ]);
+
+      const payload = {
+        form: 'trade-sample-set',
+        name, email, business, abn, phone, address, postcode,
+        _subject: subject,
+        _replyto: email,
+        page: location.href,
+        submitted_at: new Date().toISOString()
+      };
+
+      if (!FENCLY_FORM_ENDPOINT) {
+        window.location.href = mailtoUrl;
+        setNote(sNote, 'Thanks — opening your email client. We\'ll text the tracking link the moment it ships.', 'is-success');
+        sForm.reset();
+        setBtnState(btn, 'success');
+        setTimeout(() => setBtnState(btn, 'idle', original), 8000);
         return;
       }
 
-      const body = encodeURIComponent(
-        `Sample kit request:\n\nName: ${name}\nMobile: ${phone}\nAddress: ${address}\nPostcode: ${postcode}`
-      );
-      const subject = encodeURIComponent('Fencly — Free Sample Kit — ' + name + ' (' + postcode + ')');
-      window.location.href = `mailto:hello@fencly.com.au?subject=${subject}&body=${body}`;
+      sSubmitting = true;
+      setBtnState(btn, 'loading');
+      setNote(sNote, 'Sending your details…');
+      const result = await postLead(payload);
+      sSubmitting = false;
 
-      sNote.textContent = 'Thanks — opening your email client. Tracking link will text the moment it ships.';
-      sNote.style.color = 'var(--c-text-soft)';
-      sForm.reset();
+      if (result.ok) {
+        setNote(sNote, 'Thanks — your sample kit is being packed. We\'ll text the tracking link the moment it ships.', 'is-success');
+        sForm.reset();
+        setBtnState(btn, 'success');
+        setTimeout(() => setBtnState(btn, 'idle', original), 10000);
+      } else {
+        handleFallback(sNote, btn, original, mailtoUrl,
+          'Something went wrong sending that. Tap below to email us directly — your details are safe.');
+      }
     });
   }
 

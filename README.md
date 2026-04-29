@@ -59,11 +59,14 @@ No environment variables, no build command.
 fencly-website/
 ├── index.html           # Single-page site (all sections)
 ├── css/
-│   └── styles.css       # ~22 KB, all styles
+│   └── styles.css       # All styles
 ├── js/
-│   └── main.js          # ~3 KB, all interactions
+│   └── main.js          # All interactions + form submission
 ├── images/
 │   └── README.md        # Where to drop real photography
+├── apps-script/
+│   ├── Code.gs          # Google Apps Script form handler
+│   └── README.md        # 5-minute deployment guide
 └── README.md            # This file
 ```
 
@@ -119,9 +122,9 @@ Evergreen Chrome, Safari, Firefox, Edge. iOS Safari 14+ and Android Chrome 90+.
 |---|---|
 | Brand colours | `:root` block in `css/styles.css` |
 | Fonts | `<link>` in `index.html` + `--f-display` / `--f-sans` tokens |
-| Contact email | Search for `hello@fencly.com.au` in `index.html` and `js/main.js` |
+| Contact email | `FENCLY_FALLBACK_EMAIL` constant at the top of `js/main.js` (also search for `hello@fencly.com.au` in `index.html`) |
 | Product content | Each `<article class="panel" id="pN">` block in `index.html` |
-| Form submission endpoint | `js/main.js` → replace the `mailto:` fallback with a fetch to your CRM |
+| Form submission endpoint | Deploy the Google Apps Script in [`apps-script/`](apps-script/README.md), then paste the Web App URL into `FENCLY_FORM_ENDPOINT` at the top of `js/main.js`. Each submission lands in a Google Sheet, emails the company, and sends the requester a thank-you. Leave empty to use the `mailto:` fallback. |
 
 ---
 
