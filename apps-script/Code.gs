@@ -30,7 +30,7 @@ const CONFIG = {
   // Header row per form type — order matters; this is the column layout
   HEADERS: {
     quote: ['Submitted', 'Name', 'Email', 'Mobile', 'Suburb', 'Postcode',
-            'Project Type', 'Approx Length', 'Message', 'Page', 'IP'],
+            'Project Type', 'Approx Length', 'Colour', 'Message', 'Page', 'IP'],
     'sample-kit': ['Submitted', 'Name', 'Email', 'Business', 'ABN', 'Mobile',
                    'Address', 'Postcode', 'Page', 'IP']
   }
@@ -98,7 +98,7 @@ function appendRow(formType, p) {
   if (formType === 'quote') {
     row = [submitted, p.name || '', p.email || '', p.phone || '',
            p.suburb || '', p.postcode || '', p.project || '',
-           p.length || '', p.message || '', p.page || '', '—'];
+           p.length || '', p.colour || '', p.message || '', p.page || '', '—'];
   } else {
     row = [submitted, p.name || '', p.email || '', p.business || '',
            p.abn || '', p.phone || '', p.address || '', p.postcode || '',
@@ -124,6 +124,7 @@ function sendCompanyEmail(formType, p) {
     ['Postcode',    p.postcode],
     ['Project',     p.project],
     ['Approx length', p.length],
+    ['Colour',      p.colour],
     ['Message',     p.message]
   ] : [
     ['Name',     p.name],
@@ -181,7 +182,8 @@ function sendThankYouEmail(formType, p) {
   const summary = formType === 'quote' ? [
     ['Postcode', p.postcode],
     ['Project',  p.project],
-    ['Approx length', p.length]
+    ['Approx length', p.length],
+    ['Colour',   p.colour]
   ] : [
     ['Business', p.business],
     ['ABN',      p.abn],
@@ -234,6 +236,50 @@ function sendThankYouEmail(formType, p) {
     htmlBody: html,
     name: CONFIG.COMPANY_NAME
   });
+}
+
+/* ============================================================
+   ONE-TIME MIGRATIONS
+   ============================================================ */
+
+/**
+ * Adds the "Colour" column to an existing "Quote Requests" sheet,
+ * inserted between "Approx Length" and "Message". Safe to run twice —
+ * does nothing if the column is already present.
+ *
+ * Run once from the Apps Script editor: select `migrateAddColourColumn`
+ * from the function dropdown, then click Run.
+ */
+function migrateAddColourColumn() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CONFIG.SHEETS.quote);
+  if (!sheet) {
+    console.log('No "' + CONFIG.SHEETS.quote + '" sheet found — nothing to migrate.');
+    return;
+  }
+
+  const lastCol = sheet.getLastColumn();
+  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+
+  if (headers.indexOf('Colour') !== -1) {
+    console.log('"Colour" column already exists — no migration needed.');
+    return;
+  }
+
+  const messageIdx = headers.indexOf('Message'); // 0-based
+  if (messageIdx === -1) {
+    throw new Error('Could not find "Message" column to anchor the insert.');
+  }
+
+  const insertAt = messageIdx + 1; // 1-based column to insert BEFORE
+  sheet.insertColumnBefore(insertAt);
+  const headerCell = sheet.getRange(1, insertAt);
+  headerCell.setValue('Colour')
+            .setFontWeight('bold')
+            .setBackground('#2C1810')
+            .setFontColor('#F5F0E8');
+
+  console.log('Inserted "Colour" column at position ' + insertAt + '.');
 }
 
 /* ============================================================
