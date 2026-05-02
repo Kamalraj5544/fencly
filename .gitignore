@@ -1,0 +1,26 @@
+# Dependencies (dev-only; Netlify deploys static files, no npm install needed)
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Local scratch / test artefacts
+_index_test.html
+_scroll_test.html
+_test.html
+scrolltest.html
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python build helper artefacts
+__pycache__/
+*.pyc
