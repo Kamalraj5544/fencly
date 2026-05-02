@@ -1626,6 +1626,8 @@ body.cursor-active .cursor-glow { opacity: 1; }
   object-fit: cover;
   display: block;
 }
+.panel__slide--spec { background: #f6f3ec; }
+.panel__slide--spec img { object-fit: contain; padding: 24px; }
 .panel__slide-caption {
   position: absolute;
   left: 28px;
