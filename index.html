@@ -260,7 +260,7 @@
       { "@type": "ListItem", "position": 9, "url": "https://fencly.com.au/#p10",
         "item": { "@type": "Product", "name": "Single Gate",
           "description": "Pre-fabricated 900 × 1800mm pedestrian gate with aluminium frame and WPC slat infill. Drops into a Fencly fence line with concealed hinges and a flush lever.",
-          "image": "https://fencly.com.au/images/p10-single-gate.jpg",
+          "image": "https://fencly.com.au/images/p10-single-gate-1.jpg",
           "material": "Aluminium frame · WPC slat infill",
           "brand": { "@type": "Brand", "name": "Fencly" },
           "offers": { "@type": "Offer", "availability": "https://schema.org/InStock", "priceCurrency": "AUD", "url": "https://fencly.com.au/#contact" },
@@ -270,7 +270,7 @@
       { "@type": "ListItem", "position": 10, "url": "https://fencly.com.au/#p11",
         "item": { "@type": "Product", "name": "Double Gate",
           "description": "Pre-fabricated 2700 × 1800mm double-leaf driveway gate. Two 1260mm aluminium-framed leaves with WPC slat infill, centre drop-bolts and lockable lever.",
-          "image": "https://fencly.com.au/images/p11-double-gate.jpg",
+          "image": "https://fencly.com.au/images/p11-double-gate-1.jpg",
           "material": "Aluminium frame · WPC slat infill",
           "brand": { "@type": "Brand", "name": "Fencly" },
           "offers": { "@type": "Offer", "availability": "https://schema.org/InStock", "priceCurrency": "AUD", "url": "https://fencly.com.au/#contact" },
@@ -975,14 +975,66 @@
           <!-- PRODUCT 10 — Single Gate -->
           <article class="panel" id="p10" role="tabpanel" hidden>
             <div class="panel__media">
-              <div class="panel__img panel__img--p10" role="img"
-                aria-label="Fencly Single Gate — 900 × 1800mm WPC composite gate with horizontal slats and aluminium posts">
-                <picture>
-                  <source srcset="images/p10-single-gate.webp" type="image/webp" />
-                  <img class="seo-img" src="images/p10-single-gate.jpg"
-                  alt="Fencly Single Gate — 900mm wide × 1800mm tall WPC composite gate in teak with horizontal slats, aluminium posts and a flush handle."
-                  width="1600" height="1000" loading="lazy" decoding="async" />
-                </picture>
+              <div class="panel__gallery" data-gallery aria-roledescription="carousel"
+                aria-label="Single Gate product photos">
+                <ol class="panel__gallery-track" data-gallery-track>
+                  <li class="panel__slide is-active" data-slide="single1">
+                    <picture>
+                      <source srcset="images/p10-single-gate-1.webp" type="image/webp" />
+                      <img src="images/p10-single-gate-1.jpg"
+                      alt="Fencly Single Gate — teak horizontal-slat WPC composite gate with aluminium frame, fitted to a garden boundary."
+                      width="1600" height="1000" loading="lazy" decoding="async" />
+                    </picture>
+                    <span class="panel__slide-caption">Teak · Horizontal slat</span>
+                  </li>
+                  <li class="panel__slide" data-slide="single2">
+                    <picture>
+                      <source srcset="images/p10-single-gate-2.webp" type="image/webp" />
+                      <img src="images/p10-single-gate-2.jpg"
+                      alt="Fencly Single Gate — walnut WPC composite gate with horizontal slats and a louvred ventilation band along the top."
+                      width="1600" height="1000" loading="lazy" decoding="async" />
+                    </picture>
+                    <span class="panel__slide-caption">Walnut · Top vent</span>
+                  </li>
+                  <li class="panel__slide" data-slide="single3">
+                    <picture>
+                      <source srcset="images/p10-single-gate-3.webp" type="image/webp" />
+                      <img src="images/p10-single-gate-3.jpg"
+                      alt="Fencly Single Gate — teak vertical-slat WPC composite gate with a laser-cut decorative carving band."
+                      width="1600" height="1000" loading="lazy" decoding="async" />
+                    </picture>
+                    <span class="panel__slide-caption">Teak vertical · Carved band</span>
+                  </li>
+                  <li class="panel__slide" data-slide="single4">
+                    <picture>
+                      <source srcset="images/p10-single-gate-4.webp" type="image/webp" />
+                      <img src="images/p10-single-gate-4.jpg"
+                      alt="Fencly Single Gate — solid charcoal WPC composite gate with a leaf-pattern carved upper band and keypad lock."
+                      width="1600" height="1000" loading="lazy" decoding="async" />
+                    </picture>
+                    <span class="panel__slide-caption">Charcoal · Solid + carving</span>
+                  </li>
+                </ol>
+                <button class="panel__gallery-nav panel__gallery-nav--prev" type="button"
+                  data-gallery-nav="prev" aria-label="Previous image">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+                <button class="panel__gallery-nav panel__gallery-nav--next" type="button"
+                  data-gallery-nav="next" aria-label="Next image">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+                <div class="panel__gallery-dots" data-gallery-dots role="tablist" aria-label="Image">
+                  <button type="button" class="panel__gallery-dot is-active" role="tab" aria-selected="true" aria-label="Image 1" data-dot="0"></button>
+                  <button type="button" class="panel__gallery-dot" role="tab" aria-selected="false" aria-label="Image 2" data-dot="1"></button>
+                  <button type="button" class="panel__gallery-dot" role="tab" aria-selected="false" aria-label="Image 3" data-dot="2"></button>
+                  <button type="button" class="panel__gallery-dot" role="tab" aria-selected="false" aria-label="Image 4" data-dot="3"></button>
+                </div>
               </div>
               <span class="panel__overlay-num" aria-hidden="true">04</span>
               <span class="panel__vertical" aria-hidden="true">Hinged Gate · Pedestrian Access</span>
@@ -1037,14 +1089,46 @@
           <!-- PRODUCT 11 — Double Gate -->
           <article class="panel" id="p11" role="tabpanel" hidden>
             <div class="panel__media">
-              <div class="panel__img panel__img--p11" role="img"
-                aria-label="Fencly Double Gate — 2700 × 1800mm WPC composite double-leaf driveway gate with aluminium frame">
-                <picture>
-                  <source srcset="images/p11-double-gate.webp" type="image/webp" />
-                  <img class="seo-img" src="images/p11-double-gate.jpg"
-                  alt="Fencly Double Gate — 2700mm wide × 1800mm tall WPC composite double-leaf gate with horizontal slats, aluminium posts and centre drop-bolts for driveway access."
-                  width="1600" height="1000" loading="lazy" decoding="async" />
-                </picture>
+              <div class="panel__gallery" data-gallery aria-roledescription="carousel"
+                aria-label="Double Gate product photos">
+                <ol class="panel__gallery-track" data-gallery-track>
+                  <li class="panel__slide is-active" data-slide="double1">
+                    <picture>
+                      <source srcset="images/p11-double-gate-1.webp" type="image/webp" />
+                      <img src="images/p11-double-gate-1.jpg"
+                      alt="Fencly Double Gate — two equal teak WPC composite leaves on aluminium posts with a centre lever lock, installed on a driveway boundary."
+                      width="1600" height="1000" loading="lazy" decoding="async" />
+                    </picture>
+                    <span class="panel__slide-caption">Teak · Driveway pair</span>
+                  </li>
+                  <li class="panel__slide" data-slide="double2">
+                    <picture>
+                      <source srcset="images/p11-double-gate-2.webp" type="image/webp" />
+                      <img src="images/p11-double-gate-2.jpg"
+                      alt="Fencly Double Gate — asymmetric pedestrian + service-leaf composite gate with carved decorative band, set between rendered piers."
+                      width="1600" height="1000" loading="lazy" decoding="async" />
+                    </picture>
+                    <span class="panel__slide-caption">Asymmetric · Pedestrian + service leaf</span>
+                  </li>
+                </ol>
+                <button class="panel__gallery-nav panel__gallery-nav--prev" type="button"
+                  data-gallery-nav="prev" aria-label="Previous image">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+                <button class="panel__gallery-nav panel__gallery-nav--next" type="button"
+                  data-gallery-nav="next" aria-label="Next image">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+                <div class="panel__gallery-dots" data-gallery-dots role="tablist" aria-label="Image">
+                  <button type="button" class="panel__gallery-dot is-active" role="tab" aria-selected="true" aria-label="Image 1" data-dot="0"></button>
+                  <button type="button" class="panel__gallery-dot" role="tab" aria-selected="false" aria-label="Image 2" data-dot="1"></button>
+                </div>
               </div>
               <span class="panel__overlay-num" aria-hidden="true">05</span>
               <span class="panel__vertical" aria-hidden="true">Double-Leaf · Driveway Access</span>
