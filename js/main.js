@@ -516,6 +516,74 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
     }
   };
 
+  /* Read & downscale image attachments to keep the JSON payload under
+     Apps Script's per-request limit. Each photo is reduced to ~1600px
+     on its longest edge and JPEG-encoded at 0.82 quality. */
+  const MAX_PHOTOS = 4;
+  const MAX_EDGE = 1600;
+  const JPEG_QUALITY = 0.82;
+  const TOTAL_PAYLOAD_LIMIT = 9 * 1024 * 1024; // ~9 MB of base64
+
+  const downscaleImage = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('read-failed'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('decode-failed'));
+      img.onload = () => {
+        const scale = Math.min(1, MAX_EDGE / Math.max(img.width, img.height));
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', JPEG_QUALITY);
+        resolve({ name: file.name, type: 'image/jpeg', dataUrl });
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const readPhotos = async (input) => {
+    if (!input || !input.files || !input.files.length) return [];
+    const files = Array.from(input.files).slice(0, MAX_PHOTOS);
+    const out = [];
+    let total = 0;
+    for (const f of files) {
+      if (!/^image\//.test(f.type)) continue;
+      const photo = await downscaleImage(f);
+      total += photo.dataUrl.length;
+      if (total > TOTAL_PAYLOAD_LIMIT) break;
+      out.push(photo);
+    }
+    return out;
+  };
+
+  /* Wire up the photos picker so users see what they've selected */
+  const photosInput = document.getElementById('f_photos');
+  const photosList = document.getElementById('f_photos_list');
+  if (photosInput && photosList) {
+    photosInput.addEventListener('change', () => {
+      photosList.innerHTML = '';
+      const files = Array.from(photosInput.files || []);
+      const tooMany = files.length > MAX_PHOTOS;
+      files.slice(0, MAX_PHOTOS).forEach(f => {
+        const li = document.createElement('li');
+        const kb = Math.round(f.size / 1024);
+        li.textContent = `${f.name} · ${kb} KB`;
+        photosList.appendChild(li);
+      });
+      if (tooMany) {
+        const li = document.createElement('li');
+        li.className = 'is-error';
+        li.textContent = `Only the first ${MAX_PHOTOS} photos will be sent.`;
+        photosList.appendChild(li);
+      }
+    });
+  }
+
   const buildMailto = (subject, lines) => {
     const body = encodeURIComponent(lines.filter(Boolean).join('\n'));
     return `mailto:${FENCLY_FALLBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${body}`;
@@ -589,10 +657,22 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       const suburb = (data.get('suburb') || '').toString().trim();
       const project = (data.get('project') || '').toString().trim();
       const length = (data.get('length') || '').toString().trim();
+      const removeExisting = (data.get('removeExisting') || 'no').toString().trim();
+      const service = (data.get('service') || 'supply-only').toString().trim();
       const colour = (data.get('colour') || '').toString().trim();
       const message = (data.get('message') || '').toString().trim();
 
-      const subject = `Fencly free measure & quote: ${name} (${postcode})`;
+      const photoInput = form.querySelector('#f_photos');
+      let photos = [];
+      try {
+        photos = await readPhotos(photoInput);
+      } catch (err) {
+        setNote(note, 'One of the photos couldn\'t be read. Try smaller images or submit without them.', 'is-error');
+        return;
+      }
+
+      const subject = `Fencly pre-order quote: ${name} (${postcode})`;
+      const serviceLabel = service === 'supply-install' ? 'Supply and install' : 'Supply only';
       const mailtoUrl = buildMailto(subject, [
         `Name: ${name}`,
         `Mobile: ${phone}`,
@@ -600,15 +680,20 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         `Suburb: ${suburb}`,
         `Postcode: ${postcode}`,
         `Project type: ${project}`,
-        `Approx length: ${length}`,
+        `Approx length (m): ${length || '(not specified)'}`,
+        `Existing fence to remove: ${removeExisting === 'yes' ? 'Yes' : 'No'}`,
+        `Service: ${serviceLabel}`,
         `Preferred colour: ${colour || '(not specified)'}`,
+        photos.length ? `Photos attached: ${photos.length} (please upload via website form for delivery)` : '',
         '',
         message
       ]);
 
       const payload = {
         form: 'quote',
-        name, email, phone, postcode, suburb, project, length, colour, message,
+        name, email, phone, postcode, suburb, project, length,
+        removeExisting, service, colour, message,
+        photos,
         _subject: subject,
         _replyto: email,
         page: location.href,

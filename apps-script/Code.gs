@@ -22,6 +22,10 @@ const CONFIG = {
   COMPANY_EMAIL: 'hello@fencly.com.au',
   COMPANY_NAME:  'Fencly',
   REPLY_HOURS:   '4 business hours',
+  // Drive folder where uploaded photos are stored. Leave blank to auto-create
+  // a folder named below at the Drive root on first run.
+  ATTACHMENTS_FOLDER_ID: '',
+  ATTACHMENTS_FOLDER_NAME: 'Fencly Quote Attachments',
   // Sheet tabs (created automatically on first submission)
   SHEETS: {
     quote:        'Quote Requests',
@@ -30,7 +34,8 @@ const CONFIG = {
   // Header row per form type — order matters; this is the column layout
   HEADERS: {
     quote: ['Submitted', 'Name', 'Email', 'Mobile', 'Suburb', 'Postcode',
-            'Project Type', 'Approx Length', 'Colour', 'Message', 'Page', 'IP'],
+            'Project Type', 'Approx Length (m)', 'Remove Existing', 'Service',
+            'Colour', 'Message', 'Photos', 'Page', 'IP'],
     'sample-kit': ['Submitted', 'Name', 'Email', 'Business', 'ABN', 'Mobile',
                    'Address', 'Postcode', 'Page', 'IP']
   }
@@ -51,6 +56,15 @@ function doPost(e) {
     if (!CONFIG.SHEETS[formType]) {
       return jsonResponse({ ok: false, error: 'unknown-form-type' });
     }
+
+    // 0. Save any photo attachments to Drive and replace the data URLs
+    //    with shareable links before we touch the sheet or send mail.
+    if (formType === 'quote' && Array.isArray(payload.photos) && payload.photos.length) {
+      payload.photoLinks = saveAttachments(payload);
+    } else {
+      payload.photoLinks = [];
+    }
+    delete payload.photos; // never store the raw base64 in sheets/emails
 
     // 1. Sheet
     appendRow(formType, payload);
@@ -96,15 +110,55 @@ function appendRow(formType, p) {
   const submitted = new Date();
   let row;
   if (formType === 'quote') {
+    const photosCell = (p.photoLinks || []).map(l => l.url).join('\n');
     row = [submitted, p.name || '', p.email || '', p.phone || '',
            p.suburb || '', p.postcode || '', p.project || '',
-           p.length || '', p.colour || '', p.message || '', p.page || '', '—'];
+           p.length || '', formatYesNo(p.removeExisting),
+           formatService(p.service), p.colour || '', p.message || '',
+           photosCell, p.page || '', '—'];
   } else {
     row = [submitted, p.name || '', p.email || '', p.business || '',
            p.abn || '', p.phone || '', p.address || '', p.postcode || '',
            p.page || '', '—'];
   }
   sheet.appendRow(row);
+}
+
+/* ============================================================
+   ATTACHMENTS (Drive)
+   ============================================================ */
+
+function getAttachmentsFolder() {
+  if (CONFIG.ATTACHMENTS_FOLDER_ID) {
+    return DriveApp.getFolderById(CONFIG.ATTACHMENTS_FOLDER_ID);
+  }
+  const it = DriveApp.getFoldersByName(CONFIG.ATTACHMENTS_FOLDER_NAME);
+  if (it.hasNext()) return it.next();
+  return DriveApp.createFolder(CONFIG.ATTACHMENTS_FOLDER_NAME);
+}
+
+function saveAttachments(p) {
+  const links = [];
+  const folder = getAttachmentsFolder();
+  const stamp = Utilities.formatDate(new Date(), 'Australia/Sydney', 'yyyyMMdd-HHmmss');
+  const safeName = String(p.name || 'lead').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  p.photos.forEach((photo, i) => {
+    try {
+      const m = String(photo.dataUrl || '').match(/^data:([^;]+);base64,(.+)$/);
+      if (!m) return;
+      const contentType = m[1];
+      const bytes = Utilities.base64Decode(m[2]);
+      const ext = (contentType.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+      const filename = `${stamp}-${safeName}-${i + 1}.${ext}`;
+      const blob = Utilities.newBlob(bytes, contentType, filename);
+      const file = folder.createFile(blob);
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      links.push({ name: photo.name || filename, url: file.getUrl() });
+    } catch (err) {
+      console.error('attachment-failed', err);
+    }
+  });
+  return links;
 }
 
 /* ============================================================
@@ -116,6 +170,10 @@ function sendCompanyEmail(formType, p) {
     ? `New Quote Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`
     : `New Sample Set Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`;
 
+  const photoLinksHtml = (p.photoLinks || [])
+    .map(l => `<a href="${escapeHtml(l.url)}" style="color:#2C1810">${escapeHtml(l.name)}</a>`)
+    .join('<br>');
+
   const rows = formType === 'quote' ? [
     ['Name',        p.name],
     ['Email',       p.email],
@@ -123,9 +181,12 @@ function sendCompanyEmail(formType, p) {
     ['Suburb',      p.suburb],
     ['Postcode',    p.postcode],
     ['Project',     p.project],
-    ['Approx length', p.length],
+    ['Approx length (m)', p.length],
+    ['Remove existing fence', formatYesNo(p.removeExisting)],
+    ['Service',     formatService(p.service)],
     ['Colour',      p.colour],
-    ['Message',     p.message]
+    ['Message',     p.message],
+    ['Photos',      photoLinksHtml, true]
   ] : [
     ['Name',     p.name],
     ['Email',    p.email],
@@ -138,10 +199,10 @@ function sendCompanyEmail(formType, p) {
 
   const tableRows = rows
     .filter(([, v]) => v && String(v).trim())
-    .map(([k, v]) => `
+    .map(([k, v, raw]) => `
       <tr>
         <td style="padding:10px 14px;border-bottom:1px solid #eee;font-weight:600;color:#2C1810;width:140px;vertical-align:top">${escapeHtml(k)}</td>
-        <td style="padding:10px 14px;border-bottom:1px solid #eee;color:#3a3a3a;white-space:pre-wrap">${escapeHtml(v)}</td>
+        <td style="padding:10px 14px;border-bottom:1px solid #eee;color:#3a3a3a;white-space:pre-wrap">${raw ? v : escapeHtml(v)}</td>
       </tr>`)
     .join('');
 
@@ -182,8 +243,11 @@ function sendThankYouEmail(formType, p) {
   const summary = formType === 'quote' ? [
     ['Postcode', p.postcode],
     ['Project',  p.project],
-    ['Approx length', p.length],
-    ['Colour',   p.colour]
+    ['Approx length (m)', p.length],
+    ['Remove existing', formatYesNo(p.removeExisting)],
+    ['Service',  formatService(p.service)],
+    ['Colour',   p.colour],
+    ['Photos',   (p.photoLinks || []).length ? `${p.photoLinks.length} attached` : '']
   ] : [
     ['Business', p.business],
     ['ABN',      p.abn],
@@ -282,6 +346,77 @@ function migrateAddColourColumn() {
   console.log('Inserted "Colour" column at position ' + insertAt + '.');
 }
 
+/**
+ * Adds the new quote-form columns introduced with the June 2026 pre-order
+ * form: "Remove Existing", "Service" and "Photos". Also renames
+ * "Approx Length" → "Approx Length (m)" since the field is now numeric.
+ *
+ * Safe to run multiple times — each step is a no-op if already applied.
+ * Run from the Apps Script editor: select `migrateAddPreorderColumns`
+ * from the function dropdown, then click Run.
+ */
+function migrateAddPreorderColumns() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CONFIG.SHEETS.quote);
+  if (!sheet) {
+    console.log('No "' + CONFIG.SHEETS.quote + '" sheet found — nothing to migrate.');
+    return;
+  }
+
+  const headerStyle = (range) => range
+    .setFontWeight('bold')
+    .setBackground('#2C1810')
+    .setFontColor('#F5F0E8');
+
+  const readHeaders = () => sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+
+  // 1. Rename "Approx Length" → "Approx Length (m)"
+  let headers = readHeaders();
+  const lenIdx = headers.indexOf('Approx Length');
+  if (lenIdx !== -1) {
+    sheet.getRange(1, lenIdx + 1).setValue('Approx Length (m)');
+    console.log('Renamed "Approx Length" → "Approx Length (m)".');
+  }
+
+  // 2. Insert "Remove Existing" + "Service" before "Colour"
+  headers = readHeaders();
+  const colourIdx = headers.indexOf('Colour');
+  if (colourIdx === -1) {
+    throw new Error('Could not find "Colour" column to anchor the insert.');
+  }
+  if (headers.indexOf('Remove Existing') === -1) {
+    const at = colourIdx + 1; // 1-based, insert BEFORE Colour
+    sheet.insertColumnBefore(at);
+    headerStyle(sheet.getRange(1, at).setValue('Remove Existing'));
+    console.log('Inserted "Remove Existing" at column ' + at + '.');
+  }
+  headers = readHeaders();
+  const colourIdx2 = headers.indexOf('Colour');
+  if (headers.indexOf('Service') === -1) {
+    const at = colourIdx2 + 1;
+    sheet.insertColumnBefore(at);
+    headerStyle(sheet.getRange(1, at).setValue('Service'));
+    console.log('Inserted "Service" at column ' + at + '.');
+  }
+
+  // 3. Insert "Photos" before "Page"
+  headers = readHeaders();
+  if (headers.indexOf('Photos') === -1) {
+    const pageIdx = headers.indexOf('Page');
+    if (pageIdx === -1) {
+      // Append at the end if "Page" is missing for any reason
+      const at = sheet.getLastColumn() + 1;
+      headerStyle(sheet.getRange(1, at).setValue('Photos'));
+      console.log('Appended "Photos" at column ' + at + '.');
+    } else {
+      const at = pageIdx + 1;
+      sheet.insertColumnBefore(at);
+      headerStyle(sheet.getRange(1, at).setValue('Photos'));
+      console.log('Inserted "Photos" at column ' + at + '.');
+    }
+  }
+}
+
 /* ============================================================
    HELPERS
    ============================================================ */
@@ -295,6 +430,20 @@ function jsonResponse(obj) {
 function firstName(full) {
   if (!full) return 'there';
   return String(full).trim().split(/\s+/)[0];
+}
+
+function formatYesNo(v) {
+  const s = String(v || '').toLowerCase();
+  if (s === 'yes' || s === 'true' || s === '1') return 'Yes';
+  if (s === 'no'  || s === 'false' || s === '0' || s === '') return 'No';
+  return String(v);
+}
+
+function formatService(v) {
+  const s = String(v || '').toLowerCase();
+  if (s === 'supply-install' || s === 'supply_and_install') return 'Supply and install';
+  if (s === 'supply-only' || s === '') return 'Supply only';
+  return String(v);
 }
 
 function escapeHtml(s) {
