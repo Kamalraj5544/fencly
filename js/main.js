@@ -437,6 +437,19 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
     const dots = Array.from(gallery.querySelectorAll('.panel__gallery-dot'));
     const prev = gallery.querySelector('[data-gallery-nav="prev"]');
     const next = gallery.querySelector('[data-gallery-nav="next"]');
+
+    slides.forEach(slide => {
+      if (slide.classList.contains('panel__slide--spec')) return;
+      const img = slide.querySelector('img');
+      if (!img) return;
+      const apply = () => {
+        const src = img.currentSrc || img.src;
+        if (src) slide.style.setProperty('--slide-bg', `url("${src}")`);
+      };
+      if (img.complete && (img.currentSrc || img.src)) apply();
+      else img.addEventListener('load', apply, { once: true });
+    });
+
     if (!track || slides.length < 2) return;
 
     const goTo = (idx) => {
