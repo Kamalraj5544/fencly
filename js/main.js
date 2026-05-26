@@ -654,7 +654,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (submitting) return;
-      const invalid = validateRequired(form, ['name', 'email', 'phone', 'postcode']);
+      const invalid = validateRequired(form, ['name', 'email', 'phone', 'postcode', 'length']);
       if (invalid) {
         setNote(note, 'Please check the highlighted fields so we can quote you.', 'is-error');
         invalid.focus();
@@ -693,7 +693,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         `Suburb: ${suburb}`,
         `Postcode: ${postcode}`,
         `Project type: ${project}`,
-        `Approx length (m): ${length || '(not specified)'}`,
+        `Approx length (m): ${length}`,
         `Existing fence to remove: ${removeExisting === 'yes' ? 'Yes' : 'No'}`,
         `Service: ${serviceLabel}`,
         `Preferred colour: ${colour || '(not specified)'}`,
