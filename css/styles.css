@@ -35,7 +35,7 @@
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: clip; }
 body {
   margin: 0;
   font-family: var(--f-sans);
@@ -2738,7 +2738,7 @@ body.cursor-active .cursor-glow { opacity: 1; }
 }
 
 /* ---------- Contact ---------- */
-.contact { background: var(--c-cream); position: relative; overflow: hidden; }
+.contact { background: var(--c-cream); position: relative; overflow: hidden; scroll-margin-top: 90px; }
 .contact::before {
   content: '';
   position: absolute;
@@ -2976,8 +2976,40 @@ body.cursor-active .cursor-glow { opacity: 1; }
 }
 
 @media (max-width: 900px) {
-  .contact__grid { grid-template-columns: 1fr; }
+  .contact__grid { grid-template-columns: 1fr; gap: 32px; min-width: 0; }
+  .contact__grid > * { min-width: 0; max-width: 100%; }
+  .contact__grid .form { order: 1; }
+  .contact__grid .contact__head { order: 2; }
   .form__grid { grid-template-columns: 1fr; }
+  .form { padding: clamp(18px, 4vw, 28px); max-width: 100%; overflow: hidden; }
+  .form .btn--block { white-space: normal; padding: 16px 14px; font-size: 0.95rem; line-height: 1.25; }
+  .form__head { gap: 8px 12px; }
+  .form__head-tag { font-size: 0.62rem; padding: 5px 10px; letter-spacing: 0.14em; }
+  .form__preorder { font-size: 0.8rem; padding: 10px 12px; }
+  .contact { scroll-margin-top: 80px; padding-top: 28px; }
+  .contact .contact__head { padding-top: 8px; border-top: 1px solid var(--c-border); margin-top: 8px; }
+  .contact .contact__head .section__title { font-size: 1.5rem; }
+  .contact .contact__head .section__lead { font-size: 0.95rem; margin: 12px 0 18px; }
+  .contact__list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 14px 0;
+  }
+  .contact__list li:hover { padding-left: 0; }
+  .contact__list a,
+  .contact__list-val {
+    font-size: 1rem;
+    text-align: left;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+@media (max-width: 760px) {
+  .contact ~ * .mobile-cta,
+  body:has(.contact:target) .mobile-cta { display: none; }
 }
 
 /* ---------- Footer ---------- */
