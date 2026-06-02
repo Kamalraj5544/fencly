@@ -16,6 +16,24 @@ Real product photography lives here. All images are fence installations (no gate
 | Product 07 · Trellis | `p7-trellis.jpg` | 6ft full trellis dark grey composite fence |
 | Product 08 · Woven | `p8-woven.jpg` | Light brown woven WPC boundary fence |
 | Product 09 · Gates | _placeholder_ | Gate imagery pending — CSS placeholder in use |
+| Product 06 · Planter Box | `p12-planter-installed.jpg` | Teak WPC privacy screen + integrated planter boxes on a deck |
+| Product 07 · WPC Cladding | `p13-cladding-charcoal.jpg` | Charcoal fluted WPC boards as a rooftop feature wall |
+
+### Fence with Planter Box gallery (2 slides)
+
+| Slide | File | What it shows |
+|---|---|---|
+| 1 · Installed | `p12-planter-installed.jpg` | Teak privacy panels with full-width planter boxes along a deck |
+| 2 · Detail | `p12-planter-detail.jpg` | Close-up of the planter box, aluminium frame and 160mm boards |
+
+### WPC Cladding gallery (4 slides)
+
+| Slide | File | What it shows |
+|---|---|---|
+| 1 · Feature wall | `p13-cladding-charcoal.jpg` | Charcoal fluted cladding feature wall (rooftop terrace) |
+| 2 · Wall | `p13-cladding-black.jpg` | Black fluted wall cladding beside a pool |
+| 3 · Poolside | `p13-cladding-teak.jpg` | Teak fluted cladding wrapping a pool surround |
+| 4 · Boundary | `p13-cladding-boundary.jpg` | Charcoal fluted cladding on a low boundary wall |
 
 ## Privacy Fence gallery (5 swipeable slides)
 

@@ -1326,6 +1326,8 @@ body.cursor-active .cursor-glow { opacity: 1; }
 .pcard__visual--p8 { background: url('../images/p8-woven.jpg') center/cover no-repeat, #6b4e0f; }
 .pcard__visual--p10 { background: url('../images/p10-single-gate-1.jpg') center/cover no-repeat, #1a1a1a; }
 .pcard__visual--p11 { background: url('../images/p11-double-gate-1.jpg') center/cover no-repeat, #1a1a1a; }
+.pcard__visual--p12 { background: url('../images/p12-planter-installed.jpg') center/cover no-repeat, #1a1a1a; }
+.pcard__visual--p13 { background: url('../images/p13-cladding-charcoal.jpg') center/cover no-repeat, #2a2a2a; }
 .pcard__visual--p9 {
   background: linear-gradient(135deg, #2C1810 0%, #1a1a1a 60%, #3B2418 100%);
   display: flex;
@@ -5292,6 +5294,8 @@ body.cursor-active .cursor-glow { opacity: 1; }
   .pcard__visual--p8 { background-image: image-set(url('../images/p8-woven.webp') type('image/webp'), url('../images/p8-woven.jpg') type('image/jpeg')); }
   .pcard__visual--p10 { background-image: image-set(url('../images/p10-single-gate-1.webp') type('image/webp'), url('../images/p10-single-gate-1.jpg') type('image/jpeg')); }
   .pcard__visual--p11 { background-image: image-set(url('../images/p11-double-gate-1.webp') type('image/webp'), url('../images/p11-double-gate-1.jpg') type('image/jpeg')); }
+  .pcard__visual--p12 { background-image: image-set(url('../images/p12-planter-installed.webp') type('image/webp'), url('../images/p12-planter-installed.jpg') type('image/jpeg')); }
+  .pcard__visual--p13 { background-image: image-set(url('../images/p13-cladding-charcoal.webp') type('image/webp'), url('../images/p13-cladding-charcoal.jpg') type('image/jpeg')); }
   .panel__img--p1 { background-image: image-set(url('../images/p1-dual-tone-product.webp') type('image/webp'), url('../images/p1-dual-tone-product.jpg') type('image/jpeg')); }
   .panel__img--p2 { background-image: image-set(url('../images/p2-single-tone.webp') type('image/webp'), url('../images/p2-single-tone.jpg') type('image/jpeg')); }
   .panel__img--p4 { background-image: image-set(url('../images/p4-privacy.webp') type('image/webp'), url('../images/p4-privacy.jpg') type('image/jpeg')); }
