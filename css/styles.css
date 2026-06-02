@@ -1328,28 +1328,7 @@ body.cursor-active .cursor-glow { opacity: 1; }
 .pcard__visual--p11 { background: url('../images/p11-double-gate-1.jpg') center/cover no-repeat, #1a1a1a; }
 .pcard__visual--p12 { background: url('../images/p12-planter-installed.jpg') center/cover no-repeat, #1a1a1a; }
 .pcard__visual--p13 { background: url('../images/p13-cladding-charcoal.jpg') center/cover no-repeat, #2a2a2a; }
-.pcard__visual--p9 {
-  background: linear-gradient(135deg, #2C1810 0%, #1a1a1a 60%, #3B2418 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.pcard__visual--p9::before {
-  content: 'Coming soon';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--f-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  color: rgba(212, 168, 67, 0.9);
-  text-align: center;
-  z-index: 1;
-}
+.pcard__visual--p9 { background: url('../images/p9-full-trellis.jpg') center/cover no-repeat, #1a1a1a; }
 
 .pcard__meta {
   position: absolute;
@@ -1503,12 +1482,7 @@ body.cursor-active .cursor-glow { opacity: 1; }
 .panel__img--p6 { background: url('../images/p6-super-kit.jpg') center/cover no-repeat, #c5bfb2; }
 .panel__img--p7 { background: url('../images/p7-trellis.jpg') center/cover no-repeat, #1a1a1a; }
 .panel__img--p8 { background: url('../images/p8-woven.jpg') center/cover no-repeat, #6b4e0f; }
-.panel__img--p9 {
-  background:
-    radial-gradient(ellipse at 30% 20%, rgba(212, 168, 67, 0.18), transparent 60%),
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 14px),
-    linear-gradient(135deg, #2C1810 0%, #1a1a1a 50%, #0f0f0f 100%);
-}
+.panel__img--p9 { background: url('../images/p9-full-trellis.jpg') center/cover no-repeat, #1a1a1a; }
 .panel__img--coming {
   display: flex;
   align-items: center;
@@ -1764,6 +1738,34 @@ body.cursor-active .cursor-glow { opacity: 1; }
   font-size: 1.02rem;
   line-height: 1.55;
   max-width: 54ch;
+}
+
+.panel__price {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+.panel__price-from {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--c-text-soft);
+  font-weight: 600;
+}
+.panel__price-amt {
+  font-family: var(--f-display);
+  font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  font-weight: 400;
+  color: var(--c-dark);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.panel__price-note {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--c-text-soft);
 }
 
 .panel__section {}
@@ -5296,6 +5298,7 @@ body.cursor-active .cursor-glow { opacity: 1; }
   .pcard__visual--p11 { background-image: image-set(url('../images/p11-double-gate-1.webp') type('image/webp'), url('../images/p11-double-gate-1.jpg') type('image/jpeg')); }
   .pcard__visual--p12 { background-image: image-set(url('../images/p12-planter-installed.webp') type('image/webp'), url('../images/p12-planter-installed.jpg') type('image/jpeg')); }
   .pcard__visual--p13 { background-image: image-set(url('../images/p13-cladding-charcoal.webp') type('image/webp'), url('../images/p13-cladding-charcoal.jpg') type('image/jpeg')); }
+  .pcard__visual--p9 { background-image: image-set(url('../images/p9-full-trellis.webp') type('image/webp'), url('../images/p9-full-trellis.jpg') type('image/jpeg')); }
   .panel__img--p1 { background-image: image-set(url('../images/p1-dual-tone-product.webp') type('image/webp'), url('../images/p1-dual-tone-product.jpg') type('image/jpeg')); }
   .panel__img--p2 { background-image: image-set(url('../images/p2-single-tone.webp') type('image/webp'), url('../images/p2-single-tone.jpg') type('image/jpeg')); }
   .panel__img--p4 { background-image: image-set(url('../images/p4-privacy.webp') type('image/webp'), url('../images/p4-privacy.jpg') type('image/jpeg')); }
@@ -5303,4 +5306,5 @@ body.cursor-active .cursor-glow { opacity: 1; }
   .panel__img--p6 { background-image: image-set(url('../images/p6-super-kit.webp') type('image/webp'), url('../images/p6-super-kit.jpg') type('image/jpeg')); }
   .panel__img--p7 { background-image: image-set(url('../images/p7-trellis.webp') type('image/webp'), url('../images/p7-trellis.jpg') type('image/jpeg')); }
   .panel__img--p8 { background-image: image-set(url('../images/p8-woven.webp') type('image/webp'), url('../images/p8-woven.jpg') type('image/jpeg')); }
+  .panel__img--p9 { background-image: image-set(url('../images/p9-full-trellis.webp') type('image/webp'), url('../images/p9-full-trellis.jpg') type('image/jpeg')); }
 }

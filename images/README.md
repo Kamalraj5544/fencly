@@ -15,7 +15,7 @@ Real product photography lives here. All images are fence installations (no gate
 | Product 06 · Super Kit | `p6-super-kit.jpg` | Pure white composite fence with white WPC post |
 | Product 07 · Trellis | `p7-trellis.jpg` | 6ft full trellis dark grey composite fence |
 | Product 08 · Woven | `p8-woven.jpg` | Light brown woven WPC boundary fence |
-| Product 09 · Gates | _placeholder_ | Gate imagery pending — CSS placeholder in use |
+| Product 09 · Full Trellis | `p9-full-trellis.jpg` | Charcoal open-board WPC fence with aluminium posts along a boundary |
 | Product 06 · Planter Box | `p12-planter-installed.jpg` | Teak WPC privacy screen + integrated planter boxes on a deck |
 | Product 07 · WPC Cladding | `p13-cladding-charcoal.jpg` | Charcoal fluted WPC boards as a rooftop feature wall |
 
