@@ -815,6 +815,200 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
     });
   }
 
+  /* ---------- Booking form (site visit) ---------- */
+  const bForm = document.getElementById('bookingForm');
+  const bSlotsEl = document.getElementById('bookingSlots');
+  const bEmptyEl = document.getElementById('bookingSlotsEmpty');
+  const bSelectedEl = document.getElementById('bookingSelected');
+  const bSubmit = document.getElementById('bookingSubmit');
+  const bNote = document.getElementById('bookingFormNote');
+  const bSlotDate = document.getElementById('bk_slotDate');
+  const bSlotTime = document.getElementById('bk_slotTime');
+
+  if (bForm && bSlotsEl) {
+    const bInputs = bForm.querySelectorAll('input:not([type=hidden]), textarea');
+
+    const setSlotsEmpty = (msg) => {
+      bSlotsEl.innerHTML = `<p class="booking__slots-empty">${msg}</p>`;
+    };
+
+    const formatSlotDate = (iso) => {
+      // iso = YYYY-MM-DD — render as e.g. "Wed 3 Jun" without forcing a timezone shift.
+      const [y, m, d] = iso.split('-').map(Number);
+      const dt = new Date(y, (m || 1) - 1, d || 1);
+      return dt.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+    };
+
+    const formatSlotTime = (hhmm) => {
+      // 09:00 → 9:00 AM, 14:30 → 2:30 PM
+      const [hh, mm] = hhmm.split(':').map(Number);
+      const period = hh >= 12 ? 'PM' : 'AM';
+      const h12 = ((hh + 11) % 12) + 1;
+      return `${h12}:${String(mm).padStart(2, '0')} ${period}`;
+    };
+
+    const setFormEnabled = (on) => {
+      bInputs.forEach(el => { el.disabled = !on; });
+      bSubmit.disabled = !on;
+    };
+
+    const selectSlot = (date, time, btn) => {
+      bSlotsEl.querySelectorAll('.booking__slot').forEach(b => b.classList.remove('is-selected'));
+      btn.classList.add('is-selected');
+      bSlotDate.value = date;
+      bSlotTime.value = time;
+      bSelectedEl.textContent = `Selected: ${formatSlotDate(date)} at ${formatSlotTime(time)}`;
+      bSelectedEl.classList.add('is-set');
+      setFormEnabled(true);
+    };
+
+    const renderSlots = (slots) => {
+      if (!slots.length) {
+        setSlotsEmpty('No times available right now. Try the contact form below and we\'ll schedule by email.');
+        return;
+      }
+      // Group by date
+      const byDate = new Map();
+      slots.forEach(s => {
+        if (!byDate.has(s.date)) byDate.set(s.date, []);
+        byDate.get(s.date).push(s);
+      });
+
+      const frag = document.createDocumentFragment();
+      byDate.forEach((daySlots, date) => {
+        const day = document.createElement('div');
+        day.className = 'booking__day';
+        const label = document.createElement('div');
+        label.className = 'booking__day-label';
+        label.textContent = formatSlotDate(date);
+        day.appendChild(label);
+        const row = document.createElement('div');
+        row.className = 'booking__day-times';
+        daySlots.forEach(s => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'booking__slot';
+          btn.textContent = formatSlotTime(s.time);
+          if (s.notes) btn.title = s.notes;
+          btn.addEventListener('click', () => selectSlot(s.date, s.time, btn));
+          row.appendChild(btn);
+        });
+        day.appendChild(row);
+        frag.appendChild(day);
+      });
+      bSlotsEl.innerHTML = '';
+      bSlotsEl.appendChild(frag);
+    };
+
+    const fetchSlots = async () => {
+      if (!FENCLY_FORM_ENDPOINT) {
+        setSlotsEmpty('Online booking is offline. Please use the contact form below.');
+        return;
+      }
+      setSlotsEmpty('Loading available times…');
+      try {
+        const res = await fetch(`${FENCLY_FORM_ENDPOINT}?action=slots`, { method: 'GET' });
+        if (!res.ok) throw new Error('http-' + res.status);
+        const json = await res.json();
+        if (!json || !json.ok || !Array.isArray(json.slots)) throw new Error('bad-response');
+        renderSlots(json.slots);
+      } catch (err) {
+        setSlotsEmpty('Couldn\'t load times. Refresh, or use the contact form below.');
+      }
+    };
+
+    clearErrorsOnInput(bForm);
+    let bSubmitting = false;
+
+    bForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (bSubmitting) return;
+      if (!bSlotDate.value || !bSlotTime.value) {
+        setNote(bNote, 'Please choose a time slot above first.', 'is-error');
+        return;
+      }
+      const invalid = validateRequired(bForm, ['name', 'email', 'phone']);
+      if (invalid) {
+        setNote(bNote, 'Please check the highlighted fields.', 'is-error');
+        invalid.focus();
+        return;
+      }
+
+      const btn = bSubmit;
+      const original = btn ? btn.innerHTML : '';
+      const data = new FormData(bForm);
+      const payload = {
+        form: 'booking',
+        slotDate: bSlotDate.value,
+        slotTime: bSlotTime.value,
+        name:     (data.get('name') || '').toString().trim(),
+        email:    (data.get('email') || '').toString().trim(),
+        phone:    (data.get('phone') || '').toString().trim(),
+        suburb:   (data.get('suburb') || '').toString().trim(),
+        postcode: (data.get('postcode') || '').toString().trim(),
+        message:  (data.get('message') || '').toString().trim(),
+        page: location.href,
+        submitted_at: new Date().toISOString()
+      };
+
+      const subject = `Fencly site visit: ${payload.name} — ${payload.slotDate} ${payload.slotTime}`;
+      const mailtoUrl = buildMailto(subject, [
+        'I tried to book a site visit on fencly.com.au but the form didn\'t go through.',
+        '',
+        `Preferred time: ${payload.slotDate} at ${payload.slotTime}`,
+        `Name: ${payload.name}`,
+        `Mobile: ${payload.phone}`,
+        `Email: ${payload.email}`,
+        `Suburb: ${payload.suburb}`,
+        `Postcode: ${payload.postcode}`,
+        '',
+        payload.message
+      ]);
+
+      if (!FENCLY_FORM_ENDPOINT) {
+        window.location.href = mailtoUrl;
+        setNote(bNote, 'Opening your email client to confirm the booking.', 'is-success');
+        return;
+      }
+
+      bSubmitting = true;
+      setBtnState(btn, 'loading');
+      setNote(bNote, 'Confirming your slot…');
+      const result = await postLead(payload);
+      bSubmitting = false;
+
+      if (result.ok) {
+        setNote(bNote,
+          `Booked. We've sent a calendar invite to ${payload.email} and we'll see you on ${formatSlotDate(payload.slotDate)} at ${formatSlotTime(payload.slotTime)}.`,
+          'is-success');
+        bForm.reset();
+        bSlotDate.value = '';
+        bSlotTime.value = '';
+        bSelectedEl.textContent = 'No time selected yet.';
+        bSelectedEl.classList.remove('is-set');
+        setFormEnabled(false);
+        setBtnState(btn, 'success');
+        setTimeout(() => setBtnState(btn, 'idle', original), 12000);
+        // Refresh slot grid so the now-booked slot disappears.
+        setTimeout(fetchSlots, 1000);
+      } else if (result.reason === 'slot-unavailable') {
+        setNote(bNote, 'That slot was just taken — please pick another time.', 'is-error');
+        setBtnState(btn, 'idle', original);
+        bSlotDate.value = '';
+        bSlotTime.value = '';
+        bSelectedEl.textContent = 'No time selected yet.';
+        bSelectedEl.classList.remove('is-set');
+        setFormEnabled(false);
+        fetchSlots();
+      } else {
+        handleFallback(bNote, btn, original, mailtoUrl,
+          'Something went wrong confirming that. Tap below to email us and we\'ll lock the slot in manually.');
+      }
+    });
+
+    fetchSlots();
+  }
+
   /* ---------- Comparison toggle ---------- */
   const toggleBtns = document.querySelectorAll('.compare__toggle-btn');
   const toggleRows = document.querySelectorAll('.compare__table tbody tr');

@@ -22,6 +22,7 @@ const CONFIG = {
   COMPANY_EMAIL: 'hello@fencly.com.au',
   COMPANY_NAME:  'Fencly',
   REPLY_HOURS:   '4 business hours',
+  TIMEZONE:      'Australia/Sydney',
   // Drive folder where uploaded photos are stored. Leave blank to auto-create
   // a folder named below at the Drive root on first run.
   ATTACHMENTS_FOLDER_ID: '',
@@ -29,7 +30,8 @@ const CONFIG = {
   // Sheet tabs (created automatically on first submission)
   SHEETS: {
     quote:        'Quote Requests',
-    'sample-kit': 'Sample Kit Requests'
+    'sample-kit': 'Sample Kit Requests',
+    booking:      'Bookings'
   },
   // Header row per form type — order matters; this is the column layout
   HEADERS: {
@@ -37,8 +39,15 @@ const CONFIG = {
             'Project Type', 'Approx Length (m)', 'Remove Existing', 'Service',
             'Colour', 'Message', 'Photos', 'Page', 'IP'],
     'sample-kit': ['Submitted', 'Name', 'Email', 'Business', 'ABN', 'Mobile',
-                   'Address', 'Postcode', 'Page', 'IP']
-  }
+                   'Address', 'Postcode', 'Page', 'IP'],
+    booking: ['Submitted', 'Slot Date', 'Slot Time', 'Name', 'Email', 'Mobile',
+              'Suburb', 'Postcode', 'Project Notes', 'Calendar Event ID', 'Page']
+  },
+  // Site-visit booking
+  AVAILABLE_SLOTS_SHEET: 'Available Slots',
+  AVAILABLE_SLOTS_HEADERS: ['Date', 'Time', 'Status', 'Notes'],
+  BOOKING_CALENDAR_ID: 'primary',   // or a specific calendar id
+  BOOKING_DURATION_MIN: 60
 };
 
 /* ============================================================
@@ -55,6 +64,11 @@ function doPost(e) {
 
     if (!CONFIG.SHEETS[formType]) {
       return jsonResponse({ ok: false, error: 'unknown-form-type' });
+    }
+
+    // Bookings have their own claim-the-slot flow.
+    if (formType === 'booking') {
+      return handleBooking(payload);
     }
 
     // 0. Save any photo attachments to Drive and replace the data URLs
@@ -84,8 +98,18 @@ function doPost(e) {
   }
 }
 
-// Useful for sanity-checking the deployment in a browser
-function doGet() {
+// Doubles as health-check and as the slot-list endpoint for the booking UI.
+//   GET ?action=slots  →  { ok:true, slots:[{date,time,notes}, ...] }
+function doGet(e) {
+  const action = (e && e.parameter && e.parameter.action) || '';
+  if (action === 'slots') {
+    try {
+      return jsonResponse({ ok: true, slots: listAvailableSlots() });
+    } catch (err) {
+      console.error(err);
+      return jsonResponse({ ok: false, error: String(err) });
+    }
+  }
   return jsonResponse({ ok: true, service: 'fencly-form-handler' });
 }
 
@@ -116,12 +140,194 @@ function appendRow(formType, p) {
            p.length || '', formatYesNo(p.removeExisting),
            formatService(p.service), p.colour || '', p.message || '',
            photosCell, p.page || '', '—'];
+  } else if (formType === 'booking') {
+    row = [submitted, p.slotDate || '', p.slotTime || '', p.name || '',
+           p.email || '', p.phone || '', p.suburb || '', p.postcode || '',
+           p.message || '', p.calendarEventId || '', p.page || ''];
   } else {
     row = [submitted, p.name || '', p.email || '', p.business || '',
            p.abn || '', p.phone || '', p.address || '', p.postcode || '',
            p.page || '', '—'];
   }
   sheet.appendRow(row);
+}
+
+/* ============================================================
+   BOOKINGS — slot listing + claim-and-confirm
+   ============================================================ */
+
+// Slot statuses
+const SLOT_OPEN    = 'open';
+const SLOT_BOOKED  = 'booked';
+const SLOT_BLOCKED = 'blocked';
+
+// Read the "Available Slots" tab and return every open, future slot.
+// Times are returned as 'HH:mm' strings in CONFIG.TIMEZONE.
+function listAvailableSlots() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CONFIG.AVAILABLE_SLOTS_SHEET);
+  if (!sheet) return [];
+  const last = sheet.getLastRow();
+  if (last < 2) return [];
+
+  const values = sheet.getRange(2, 1, last - 1, 4).getValues();
+  const now = new Date();
+  const out = [];
+  values.forEach(([date, time, status, notes]) => {
+    const dateStr = normalizeDate(date);
+    const timeStr = normalizeTime(time);
+    if (!dateStr || !timeStr) return;
+    if (String(status || '').toLowerCase() !== SLOT_OPEN) return;
+    if (slotDateTime(dateStr, timeStr) <= now) return;
+    out.push({ date: dateStr, time: timeStr, notes: String(notes || '') });
+  });
+  // Sort chronologically
+  out.sort((a, b) => slotDateTime(a.date, a.time) - slotDateTime(b.date, b.time));
+  return out;
+}
+
+// Find the row index (1-based, including header) of a slot matching date+time.
+// Returns -1 if no match.
+function findSlotRow(sheet, dateStr, timeStr) {
+  const last = sheet.getLastRow();
+  if (last < 2) return -1;
+  const values = sheet.getRange(2, 1, last - 1, 4).getValues();
+  for (let i = 0; i < values.length; i++) {
+    if (normalizeDate(values[i][0]) === dateStr && normalizeTime(values[i][1]) === timeStr) {
+      return i + 2;
+    }
+  }
+  return -1;
+}
+
+function handleBooking(payload) {
+  const required = ['slotDate', 'slotTime', 'name', 'email', 'phone'];
+  for (const k of required) {
+    if (!payload[k] || !String(payload[k]).trim()) {
+      return jsonResponse({ ok: false, error: 'missing-' + k });
+    }
+  }
+
+  const slotDate = String(payload.slotDate).trim();
+  const slotTime = String(payload.slotTime).trim();
+
+  // Reject obviously past slots up front (cheap check; the lock-guarded
+  // status check below is the real source of truth).
+  if (slotDateTime(slotDate, slotTime) <= new Date()) {
+    return jsonResponse({ ok: false, error: 'slot-in-past' });
+  }
+
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(5000);
+  } catch (err) {
+    return jsonResponse({ ok: false, error: 'busy-try-again' });
+  }
+
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const slotsSheet = ss.getSheetByName(CONFIG.AVAILABLE_SLOTS_SHEET);
+    if (!slotsSheet) return jsonResponse({ ok: false, error: 'slots-not-configured' });
+
+    const rowIdx = findSlotRow(slotsSheet, slotDate, slotTime);
+    if (rowIdx === -1) return jsonResponse({ ok: false, error: 'slot-unavailable' });
+    const currentStatus = String(slotsSheet.getRange(rowIdx, 3).getValue() || '').toLowerCase();
+    if (currentStatus !== SLOT_OPEN) {
+      return jsonResponse({ ok: false, error: 'slot-unavailable' });
+    }
+
+    // Claim the slot first — fail-closed: if the calendar/email step
+    // throws below, the slot stays marked booked rather than risk a
+    // double-book. The owner can manually re-open it from the Sheet.
+    slotsSheet.getRange(rowIdx, 3).setValue(SLOT_BOOKED);
+    SpreadsheetApp.flush();
+
+    // Create the calendar event with both guests invited.
+    let eventId = '';
+    try {
+      const start = slotDateTime(slotDate, slotTime);
+      const end = new Date(start.getTime() + CONFIG.BOOKING_DURATION_MIN * 60 * 1000);
+      const cal = CalendarApp.getCalendarById(CONFIG.BOOKING_CALENDAR_ID)
+               || CalendarApp.getDefaultCalendar();
+      const event = cal.createEvent(
+        `Fencly site visit — ${payload.name}`,
+        start,
+        end,
+        {
+          description: bookingEventDescription(payload),
+          guests: [CONFIG.COMPANY_EMAIL, payload.email].filter(Boolean).join(','),
+          sendInvites: true,
+          location: [payload.suburb, payload.postcode].filter(Boolean).join(' ')
+        }
+      );
+      eventId = event.getId();
+    } catch (err) {
+      console.error('calendar-failed', err);
+      // Non-fatal: slot is booked, emails will still go out.
+    }
+
+    payload.calendarEventId = eventId;
+    appendRow('booking', payload);
+    sendCompanyEmail('booking', payload);
+    if (payload.email) sendThankYouEmail('booking', payload);
+
+    return jsonResponse({ ok: true });
+  } catch (err) {
+    console.error(err);
+    return jsonResponse({ ok: false, error: String(err) });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function bookingEventDescription(p) {
+  return [
+    `Name: ${p.name || ''}`,
+    `Email: ${p.email || ''}`,
+    `Mobile: ${p.phone || ''}`,
+    `Suburb: ${p.suburb || ''}`,
+    `Postcode: ${p.postcode || ''}`,
+    p.message ? `Notes: ${p.message}` : ''
+  ].filter(Boolean).join('\n');
+}
+
+// "2026-06-03" + "09:00" → Date in CONFIG.TIMEZONE
+function slotDateTime(dateStr, timeStr) {
+  const [y, m, d] = String(dateStr).split('-').map(Number);
+  const [hh, mm] = String(timeStr).split(':').map(Number);
+  // Use the script's timezone (set via CONFIG.TIMEZONE on the project)
+  // by constructing in UTC then offsetting — but Apps Script's project
+  // timezone already governs `new Date(y,m,d,hh,mm)`, so trust that.
+  return new Date(y, (m || 1) - 1, d || 1, hh || 0, mm || 0, 0, 0);
+}
+
+function normalizeDate(v) {
+  if (!v) return '';
+  if (v instanceof Date) {
+    return Utilities.formatDate(v, CONFIG.TIMEZONE, 'yyyy-MM-dd');
+  }
+  const s = String(v).trim();
+  // Accept already-formatted YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  // Try to parse anything else into a Date
+  const d = new Date(s);
+  if (!isNaN(d)) return Utilities.formatDate(d, CONFIG.TIMEZONE, 'yyyy-MM-dd');
+  return '';
+}
+
+function normalizeTime(v) {
+  if (!v) return '';
+  if (v instanceof Date) {
+    return Utilities.formatDate(v, CONFIG.TIMEZONE, 'HH:mm');
+  }
+  const s = String(v).trim();
+  // 09:00 / 9:00 / 09:00:00
+  const m = s.match(/^(\d{1,2}):(\d{2})/);
+  if (m) {
+    const hh = String(Math.min(23, parseInt(m[1], 10))).padStart(2, '0');
+    return `${hh}:${m[2]}`;
+  }
+  return '';
 }
 
 /* ============================================================
@@ -166,36 +372,57 @@ function saveAttachments(p) {
    ============================================================ */
 
 function sendCompanyEmail(formType, p) {
-  const subject = formType === 'quote'
-    ? `New Quote Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`
-    : `New Sample Set Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`;
+  let subject;
+  if (formType === 'quote') {
+    subject = `New Quote Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`;
+  } else if (formType === 'booking') {
+    subject = `New Site Visit Booking: ${p.name || 'Anonymous'} — ${p.slotDate} ${p.slotTime}`;
+  } else {
+    subject = `New Sample Set Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`;
+  }
 
   const photoLinksHtml = (p.photoLinks || [])
     .map(l => `<a href="${escapeHtml(l.url)}" style="color:#2C1810">${escapeHtml(l.name)}</a>`)
     .join('<br>');
 
-  const rows = formType === 'quote' ? [
-    ['Name',        p.name],
-    ['Email',       p.email],
-    ['Mobile',      p.phone],
-    ['Suburb',      p.suburb],
-    ['Postcode',    p.postcode],
-    ['Project',     p.project],
-    ['Approx length (m)', p.length],
-    ['Remove existing fence', formatYesNo(p.removeExisting)],
-    ['Service',     formatService(p.service)],
-    ['Colour',      p.colour],
-    ['Message',     p.message],
-    ['Photos',      photoLinksHtml, true]
-  ] : [
-    ['Name',     p.name],
-    ['Email',    p.email],
-    ['Business', p.business],
-    ['ABN',      p.abn],
-    ['Mobile',   p.phone],
-    ['Address',  p.address],
-    ['Postcode', p.postcode]
-  ];
+  let rows;
+  if (formType === 'quote') {
+    rows = [
+      ['Name',        p.name],
+      ['Email',       p.email],
+      ['Mobile',      p.phone],
+      ['Suburb',      p.suburb],
+      ['Postcode',    p.postcode],
+      ['Project',     p.project],
+      ['Approx length (m)', p.length],
+      ['Remove existing fence', formatYesNo(p.removeExisting)],
+      ['Service',     formatService(p.service)],
+      ['Colour',      p.colour],
+      ['Message',     p.message],
+      ['Photos',      photoLinksHtml, true]
+    ];
+  } else if (formType === 'booking') {
+    rows = [
+      ['Slot',     `${p.slotDate} at ${p.slotTime}`],
+      ['Name',     p.name],
+      ['Email',    p.email],
+      ['Mobile',   p.phone],
+      ['Suburb',   p.suburb],
+      ['Postcode', p.postcode],
+      ['Notes',    p.message],
+      ['Calendar event', p.calendarEventId ? 'created' : 'not created (check logs)']
+    ];
+  } else {
+    rows = [
+      ['Name',     p.name],
+      ['Email',    p.email],
+      ['Business', p.business],
+      ['ABN',      p.abn],
+      ['Mobile',   p.phone],
+      ['Address',  p.address],
+      ['Postcode', p.postcode]
+    ];
+  }
 
   const tableRows = rows
     .filter(([, v]) => v && String(v).trim())
@@ -232,28 +459,39 @@ function sendCompanyEmail(formType, p) {
    ============================================================ */
 
 function sendThankYouEmail(formType, p) {
-  const subject = formType === 'quote'
-    ? `Thanks ${firstName(p.name)}, your Fencly quote is in the queue`
-    : `Thanks ${firstName(p.name)}, your Fencly sample set is on the way`;
-
-  const intro = formType === 'quote'
-    ? `Thanks for getting in touch. Your free measure and quote request is in front of our Sydney team. We usually reply within ${CONFIG.REPLY_HOURS}.`
-    : `Thanks for requesting a sample set. We're packing real co-extruded WPC boards and posting them to you within 2–4 business days.`;
-
-  const summary = formType === 'quote' ? [
-    ['Postcode', p.postcode],
-    ['Project',  p.project],
-    ['Approx length (m)', p.length],
-    ['Remove existing', formatYesNo(p.removeExisting)],
-    ['Service',  formatService(p.service)],
-    ['Colour',   p.colour],
-    ['Photos',   (p.photoLinks || []).length ? `${p.photoLinks.length} attached` : '']
-  ] : [
-    ['Business', p.business],
-    ['ABN',      p.abn],
-    ['Address',  p.address],
-    ['Postcode', p.postcode]
-  ];
+  let subject, intro, summary;
+  if (formType === 'quote') {
+    subject = `Thanks ${firstName(p.name)}, your Fencly quote is in the queue`;
+    intro = `Thanks for getting in touch. Your free measure and quote request is in front of our Sydney team. We usually reply within ${CONFIG.REPLY_HOURS}.`;
+    summary = [
+      ['Postcode', p.postcode],
+      ['Project',  p.project],
+      ['Approx length (m)', p.length],
+      ['Remove existing', formatYesNo(p.removeExisting)],
+      ['Service',  formatService(p.service)],
+      ['Colour',   p.colour],
+      ['Photos',   (p.photoLinks || []).length ? `${p.photoLinks.length} attached` : '']
+    ];
+  } else if (formType === 'booking') {
+    subject = `Your Fencly site visit is booked — ${p.slotDate} at ${p.slotTime}`;
+    intro = `Your site visit is locked in. We've sent a calendar invite to ${p.email} so you can add it to your diary. If anything changes, just reply to this email.`;
+    summary = [
+      ['Date',     p.slotDate],
+      ['Time',     p.slotTime],
+      ['Suburb',   p.suburb],
+      ['Postcode', p.postcode],
+      ['Notes',    p.message]
+    ];
+  } else {
+    subject = `Thanks ${firstName(p.name)}, your Fencly sample set is on the way`;
+    intro = `Thanks for requesting a sample set. We're packing real co-extruded WPC boards and posting them to you within 2–4 business days.`;
+    summary = [
+      ['Business', p.business],
+      ['ABN',      p.abn],
+      ['Address',  p.address],
+      ['Postcode', p.postcode]
+    ];
+  }
 
   const summaryHtml = summary
     .filter(([, v]) => v && String(v).trim())
@@ -414,6 +652,64 @@ function migrateAddPreorderColumns() {
       headerStyle(sheet.getRange(1, at).setValue('Photos'));
       console.log('Inserted "Photos" at column ' + at + '.');
     }
+  }
+}
+
+/**
+ * Creates the "Available Slots" and "Bookings" tabs used by the site-visit
+ * booking module. Safe to run multiple times — each step is a no-op if the
+ * tab/headers already exist.
+ *
+ * Run once from the Apps Script editor: select `migrateAddBookingSheets`
+ * from the function dropdown, then click Run.
+ */
+function migrateAddBookingSheets() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const headerStyle = (range) => range
+    .setFontWeight('bold')
+    .setBackground('#2C1810')
+    .setFontColor('#F5F0E8');
+
+  // 1. Available Slots (owner-managed)
+  let slots = ss.getSheetByName(CONFIG.AVAILABLE_SLOTS_SHEET);
+  if (!slots) {
+    slots = ss.insertSheet(CONFIG.AVAILABLE_SLOTS_SHEET);
+    slots.appendRow(CONFIG.AVAILABLE_SLOTS_HEADERS);
+    slots.setFrozenRows(1);
+    headerStyle(slots.getRange(1, 1, 1, CONFIG.AVAILABLE_SLOTS_HEADERS.length));
+    slots.setColumnWidth(1, 110);
+    slots.setColumnWidth(2, 90);
+    slots.setColumnWidth(3, 110);
+    slots.setColumnWidth(4, 280);
+
+    // Status dropdown on column C (rows 2..1000)
+    const rule = SpreadsheetApp.newDataValidation()
+      .requireValueInList([SLOT_OPEN, SLOT_BOOKED, SLOT_BLOCKED], true)
+      .setAllowInvalid(false)
+      .build();
+    slots.getRange(2, 3, 999, 1).setDataValidation(rule);
+
+    // Seed one example row, two weeks out, so the format is obvious.
+    const example = new Date();
+    example.setDate(example.getDate() + 14);
+    const exampleDate = Utilities.formatDate(example, CONFIG.TIMEZONE, 'yyyy-MM-dd');
+    slots.appendRow([exampleDate, '09:00', SLOT_OPEN, 'Example — edit or delete']);
+
+    console.log('Created "' + CONFIG.AVAILABLE_SLOTS_SHEET + '" tab.');
+  } else {
+    console.log('"' + CONFIG.AVAILABLE_SLOTS_SHEET + '" already exists — skipped.');
+  }
+
+  // 2. Bookings (system-written)
+  let bookings = ss.getSheetByName(CONFIG.SHEETS.booking);
+  if (!bookings) {
+    bookings = ss.insertSheet(CONFIG.SHEETS.booking);
+    bookings.appendRow(CONFIG.HEADERS.booking);
+    bookings.setFrozenRows(1);
+    headerStyle(bookings.getRange(1, 1, 1, CONFIG.HEADERS.booking.length));
+    console.log('Created "' + CONFIG.SHEETS.booking + '" tab.');
+  } else {
+    console.log('"' + CONFIG.SHEETS.booking + '" already exists — skipped.');
   }
 }
 
