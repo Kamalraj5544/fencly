@@ -28,6 +28,11 @@
     </image:image>
   </url>
   <url>
+    <loc>https://fencly.com.au/wpc-fencing-installation.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://fencly.com.au/warranty.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

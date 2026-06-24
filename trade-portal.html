@@ -17,7 +17,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
   <link rel="manifest" href="favicon/site.webmanifest" />
 
-  <link rel="preload" as="font" type="font/woff2" href="fonts/inter-tight-normal-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/inter-tight-normal-300-latin.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="fonts/fraunces-normal-300-latin.woff2" crossorigin />
   <link rel="preload" as="style" href="css/fonts.css" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="css/fonts.css" /></noscript>
@@ -59,7 +59,7 @@
       <a href="index.html#trade">Trade</a>
       <a href="index.html#quote">Contact</a>
       <a href="warranty.html">15-Year Warranty</a>
-      <a href="tel:+61421201613" class="nav__mobile-phone">Call +61 421 201 613</a>
+      <a href="tel:+61421201613" class="nav__mobile-phone">Call 0421 201 613</a>
       <a href="index.html#trade" class="btn btn--primary">Apply to Become a Partner</a>
     </div>
   </header>
@@ -86,7 +86,7 @@
 
           <div class="portal__support">
             <strong>Need a hand?</strong>
-            <p>Call <a href="tel:+61421201613">+61 421 201 613</a> or email <a href="mailto:hello@fencly.com.au">hello@fencly.com.au</a> &mdash; we're on Mon&ndash;Sat, 8:30&ndash;17:30 AEST.</p>
+            <p>Call <a href="tel:+61421201613">0421 201 613</a> or email <a href="mailto:hello@fencly.com.au">hello@fencly.com.au</a> &mdash; we're on Mon&ndash;Sat, 8:30&ndash;17:30 AEST.</p>
           </div>
         </div>
 
@@ -126,9 +126,26 @@
 
   <footer class="footer footer--mini" role="contentinfo">
     <div class="container">
-      <p>© <span id="year"></span> Fencly Australia · ABN 69 554 363 962 · <a href="tel:+61421201613">+61 421 201 613</a> · <a href="mailto:hello@fencly.com.au">hello@fencly.com.au</a></p>
+      <address class="footer-nap">
+        <strong class="footer-nap__name">Fencly</strong>
+        <span>235 Kurrajong Rd, Prestons, NSW 2170</span>
+        <span><a href="tel:+61421201613">0421 201 613</a></span>
+        <span><a href="mailto:hello@fencly.com.au">hello@fencly.com.au</a></span>
+        <span>ABN 69 554 363 962</span>
+      </address>
+      <p>© <span id="year"></span> Fencly Australia · All rights reserved.</p>
     </div>
   </footer>
+
+  <div class="mobile-cta" aria-label="Quick contact">
+    <a href="tel:+61421201613" class="mobile-cta__btn mobile-cta__btn--call">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Call</span>
+    </a>
+    <a href="index.html#quote" class="mobile-cta__btn mobile-cta__btn--quote">
+      Get a Free Quote (incl. GST)<span aria-hidden="true">→</span>
+    </a>
+  </div>
 
   <script src="js/main.min.js" defer></script>
   <script>
