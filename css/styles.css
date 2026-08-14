@@ -5354,6 +5354,12 @@ body.cursor-active .cursor-glow { opacity: 1; }
 }
 .footer__address a { color: rgba(245, 240, 232, 0.78); }
 .footer__address a:hover { color: var(--c-gold-soft); }
+.footer__address-note {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: rgba(245, 240, 232, 0.45);
+}
 
 /* Mini-footer NAP block (warranty / portal / wpc pages) */
 .footer--mini .footer-nap {
@@ -5949,3 +5955,174 @@ body.cursor-active .cursor-glow { opacity: 1; }
 @media (max-width: 760px) {
   .page-wpc .footer { padding-bottom: calc(28px + 80px + env(safe-area-inset-bottom, 0px)); }
 }
+
+/* ===========================================================
+   SEO CLUSTER PAGES — service-area grid & hub link grid
+   Used on wpc-fencing-sydney.html and suburb / cluster pages.
+   Light-section variants (distinct from the dark .area-card).
+   =========================================================== */
+.svc-grid {
+  margin-top: 44px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 560px) { .svc-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 900px) { .svc-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.svc-card {
+  display: block;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.svc-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212, 168, 67, 0.5);
+  box-shadow: var(--shadow-md);
+}
+.svc-card strong {
+  display: block;
+  font-family: var(--f-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--c-dark);
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.svc-card span { font-size: 0.9rem; color: var(--c-text-soft); }
+.svc-card--cta {
+  background: var(--c-dark);
+  border-color: var(--c-dark);
+}
+.svc-card--cta strong { color: var(--c-cream); }
+.svc-card--cta span { color: var(--c-gold-soft); }
+
+.hub-grid {
+  margin-top: 44px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 620px) { .hub-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 980px) { .hub-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.hub-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.hub-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212, 168, 67, 0.5);
+  box-shadow: var(--shadow-md);
+}
+.hub-card h3 {
+  font-family: var(--f-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--c-dark);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+.hub-card p {
+  color: var(--c-text-soft);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  flex: 1;
+}
+.hub-card__go {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--c-gold);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+}
+.hub-card:hover .hub-card__go { color: #b8862a; }
+
+/* Cost page — pricing tiers & callout */
+.price-grid {
+  margin-top: 44px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+@media (min-width: 620px) { .price-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 980px) { .price-grid { grid-template-columns: repeat(4, 1fr); } }
+.price-card {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: 26px 24px;
+  box-shadow: var(--shadow-sm);
+}
+.price-card--gold { border-color: rgba(212, 168, 67, 0.6); box-shadow: var(--shadow-md); }
+.price-card__tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-gold);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.price-card h3 {
+  font-family: var(--f-display);
+  font-size: 1.25rem;
+  color: var(--c-dark);
+  margin-bottom: 8px;
+}
+.price-card__amount {
+  font-family: var(--f-display);
+  font-size: 2.1rem;
+  color: var(--c-dark);
+  font-weight: 500;
+  line-height: 1;
+  margin: 8px 0 4px;
+}
+.price-card__amount em { font-size: 0.9rem; font-style: normal; color: var(--c-text-soft); }
+.price-card p { color: var(--c-text-soft); font-size: 0.92rem; line-height: 1.55; margin-top: 10px; }
+
+.callout {
+  margin-top: 40px;
+  background: var(--c-dark);
+  color: var(--c-cream);
+  border-radius: var(--r-lg);
+  padding: clamp(28px, 4vw, 44px);
+}
+.callout p { color: rgba(245, 240, 232, 0.82); line-height: 1.6; }
+.callout p + p { margin-top: 14px; }
+.callout strong { color: var(--c-gold-soft); }
+
+/* Prose block for guides / cost narrative on light sections */
+.prose { max-width: 760px; }
+.prose h2 { font-family: var(--f-display); font-size: clamp(1.6rem, 3vw, 2.2rem); color: var(--c-dark); margin: 40px 0 14px; }
+.prose h3 { font-family: var(--f-display); font-size: 1.3rem; color: var(--c-dark); margin: 28px 0 10px; }
+.prose p { color: var(--c-text-soft); line-height: 1.7; margin-bottom: 14px; }
+.prose ul { margin: 0 0 18px; padding: 0; }
+.prose ul li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 10px;
+  color: var(--c-text-soft);
+  line-height: 1.6;
+}
+.prose ul li::before {
+  content: "";
+  position: absolute;
+  left: 4px; top: 10px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--c-gold);
+}
+.prose a { color: #b8862a; border-bottom: 1px solid rgba(212, 168, 67, 0.4); }
+.prose strong { color: var(--c-dark); }

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- Homepage -->
   <url>
     <loc>https://fencly.com.au/</loc>
+    <lastmod>2026-07-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -15,8 +18,20 @@
       <image:title>Fencly Privacy Fence (zero-gap WPC composite)</image:title>
     </image:image>
     <image:image>
+      <image:loc>https://fencly.com.au/images/p4-privacy-teak.jpg</image:loc>
+      <image:title>Fencly Privacy Fence in Teak (WPC composite)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p4-privacy-charcoal.jpg</image:loc>
+      <image:title>Fencly Privacy Fence in Charcoal (WPC composite)</image:title>
+    </image:image>
+    <image:image>
       <image:loc>https://fencly.com.au/images/p7-mid-trellis-1.jpg</image:loc>
       <image:title>Fencly Mid Trellis (semi-open WPC composite)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p9-full-trellis.jpg</image:loc>
+      <image:title>Fencly Full Trellis (WPC composite)</image:title>
     </image:image>
     <image:image>
       <image:loc>https://fencly.com.au/images/p10-single-gate-1.jpg</image:loc>
@@ -26,20 +41,150 @@
       <image:loc>https://fencly.com.au/images/p11-double-gate-1.jpg</image:loc>
       <image:title>Fencly Double Gate (2700 × 1800mm WPC composite double-leaf gate)</image:title>
     </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p12-planter-installed.jpg</image:loc>
+      <image:title>Fencly Fence with Planter Box (WPC composite)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p13-cladding-charcoal.jpg</image:loc>
+      <image:title>Fencly WPC Cladding in Charcoal</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p13-cladding-teak.jpg</image:loc>
+      <image:title>Fencly WPC Cladding in Teak</image:title>
+    </image:image>
   </url>
+
+  <!-- Sydney hub (money page) -->
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-installation.html</loc>
+    <loc>https://fencly.com.au/wpc-fencing-sydney.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/hero.jpg</image:loc>
+      <image:title>WPC fencing in Sydney by Fencly</image:title>
+    </image:image>
+  </url>
+
+  <!-- Cost page -->
+  <url>
+    <loc>https://fencly.com.au/wpc-fencing-cost.html</loc>
+    <lastmod>2026-07-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+
+  <!-- Comparison pages -->
   <url>
-    <loc>https://fencly.com.au/warranty.html</loc>
+    <loc>https://fencly.com.au/wpc-vs-colorbond-fencing.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://fencly.com.au/wpc-vs-timber-fencing.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Colours -->
+  <url>
+    <loc>https://fencly.com.au/wpc-fencing-colours.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p4-privacy-teak.jpg</image:loc>
+      <image:title>WPC fence colour — Teak</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://fencly.com.au/images/p13-cladding-black.jpg</image:loc>
+      <image:title>WPC colour — Black cladding</image:title>
+    </image:image>
+  </url>
+
+  <!-- Installation service -->
+  <url>
+    <loc>https://fencly.com.au/wpc-fencing-installation.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Sydney suburb pages -->
+  <url>
+    <loc>https://fencly.com.au/wpc-fencing-parramatta.html</loc>
+    <lastmod>2026-07-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://fencly.com.au/trade-portal.html</loc>
+    <loc>https://fencly.com.au/wpc-fencing-the-hills.html</loc>
+    <lastmod>2026-07-01</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://fencly.com.au/wpc-fencing-northern-beaches.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://fencly.com.au/wpc-fencing-liverpool.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://fencly.com.au/wpc-fencing-blacktown.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Guides -->
+  <url>
+    <loc>https://fencly.com.au/how-to-install-wpc-fence.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://fencly.com.au/wpc-fence-maintenance.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://fencly.com.au/best-wpc-fence-colours-coastal-sydney.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://fencly.com.au/what-is-co-extruded-wpc.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Warranty -->
+  <url>
+    <loc>https://fencly.com.au/warranty.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Trade portal (noindex on-page, low priority) -->
+  <url>
+    <loc>https://fencly.com.au/trade-portal.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>
