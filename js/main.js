@@ -650,11 +650,53 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
   const note = document.getElementById('formNote');
   if (form) {
     clearErrorsOnInput(form);
+
+    /* Product-type branching. Hidden branches are disabled so their fields
+       stay out of FormData and out of constraint validation. */
+    const branches = Array.from(form.querySelectorAll('.form__branch'));
+    const productInputs = Array.from(form.querySelectorAll('input[name="product"]'));
+    const currentProduct = () => (productInputs.find(i => i.checked) || {}).value || 'fence';
+    const syncBranches = () => {
+      const active = currentProduct();
+      branches.forEach((b) => {
+        const on = b.dataset.branch === active;
+        b.hidden = !on;
+        b.querySelectorAll('input, select, textarea').forEach((el) => { el.disabled = !on; });
+      });
+    };
+    productInputs.forEach(i => i.addEventListener('change', syncBranches));
+    syncBranches();
+
+    /* Human-readable summary of whichever branch is active. */
+    const productLines = (data) => {
+      const product = (data.get('product') || 'fence').toString();
+      const val = k => (data.get(k) || '').toString().trim();
+      if (product === 'cladding') {
+        return ['Product: WPC Cladding',
+          `Board: ${val('claddingBoard') || '(not specified)'}`,
+          `Colour: ${val('claddingColour') || '(not specified)'}`,
+          `Boards: ${val('boards') || '(not specified)'}`,
+          `Approx area (m2): ${val('area') || '(not specified)'}`];
+      }
+      if (product === 'gates') {
+        return ['Product: Gates',
+          `Gate type: ${val('gateType') || '(not specified)'}`,
+          `Colour: ${val('gateColour') || '(not specified)'}`,
+          `Quantity: ${val('gateQty') || '(not specified)'}`];
+      }
+      return ['Product: WPC Fence',
+        `Height: ${val('fenceHeight') || '(not specified)'}`,
+        `Style: ${val('fenceStyle') || '(not specified)'}`,
+        `Colour: ${val('fenceColour') || '(not specified)'}`,
+        `Panels: ${val('panels') || '(not specified)'}`,
+        `Approx run (m): ${val('length') || '(not specified)'}`];
+    };
+
     let submitting = false;
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (submitting) return;
-      const invalid = validateRequired(form, ['name', 'email', 'phone', 'postcode', 'length']);
+      const invalid = validateRequired(form, ['name', 'email', 'phone', 'postcode']);
       if (invalid) {
         setNote(note, 'Please check the highlighted fields so we can quote you.', 'is-error');
         invalid.focus();
@@ -668,11 +710,9 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       const phone = data.get('phone').toString().trim();
       const postcode = data.get('postcode').toString().trim();
       const suburb = (data.get('suburb') || '').toString().trim();
-      const project = (data.get('project') || '').toString().trim();
-      const length = (data.get('length') || '').toString().trim();
-      const removeExisting = (data.get('removeExisting') || 'no').toString().trim();
-      const service = (data.get('service') || 'supply-only').toString().trim();
-      const colour = (data.get('colour') || '').toString().trim();
+      const product = (data.get('product') || 'fence').toString().trim();
+      const fulfilment = (data.get('fulfilment') || 'delivery').toString().trim();
+      const installerReferral = (data.get('installerReferral') || 'no').toString().trim();
       const message = (data.get('message') || '').toString().trim();
 
       const photoInput = form.querySelector('#f_photos');
@@ -684,28 +724,41 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         return;
       }
 
-      const subject = `Fencly pre-order quote: ${name} (${postcode})`;
-      const serviceLabel = service === 'supply-install' ? 'Supply and install' : 'Supply only';
+      const productLabel = product === 'cladding' ? 'WPC Cladding' : product === 'gates' ? 'Gates' : 'WPC Fence';
+      const subject = `Fencly supply enquiry — ${productLabel}: ${name} (${postcode})`;
       const mailtoUrl = buildMailto(subject, [
         `Name: ${name}`,
         `Mobile: ${phone}`,
         `Email: ${email}`,
         `Suburb: ${suburb}`,
         `Postcode: ${postcode}`,
-        `Project type: ${project}`,
-        `Approx length (m): ${length}`,
-        `Existing fence to remove: ${removeExisting === 'yes' ? 'Yes' : 'No'}`,
-        `Service: ${serviceLabel}`,
-        `Preferred colour: ${colour || '(not specified)'}`,
+        ''
+      ].concat(productLines(data)).concat([
+        '',
+        `Delivery or pickup: ${fulfilment === 'pickup' ? 'Pickup — Silverwater' : 'Delivery'}`,
+        `Installer referral wanted: ${installerReferral === 'yes' ? 'Yes' : 'No'}`,
         photos.length ? `Photos attached: ${photos.length} (please upload via website form for delivery)` : '',
         '',
         message
-      ]);
+      ]));
 
       const payload = {
         form: 'quote',
-        name, email, phone, postcode, suburb, project, length,
-        removeExisting, service, colour, message,
+        name, email, phone, postcode, suburb,
+        product, productLabel,
+        fenceHeight: (data.get('fenceHeight') || '').toString(),
+        fenceStyle: (data.get('fenceStyle') || '').toString(),
+        fenceColour: (data.get('fenceColour') || '').toString(),
+        panels: (data.get('panels') || '').toString(),
+        length: (data.get('length') || '').toString(),
+        claddingBoard: (data.get('claddingBoard') || '').toString(),
+        claddingColour: (data.get('claddingColour') || '').toString(),
+        boards: (data.get('boards') || '').toString(),
+        area: (data.get('area') || '').toString(),
+        gateType: (data.get('gateType') || '').toString(),
+        gateColour: (data.get('gateColour') || '').toString(),
+        gateQty: (data.get('gateQty') || '').toString(),
+        fulfilment, installerReferral, message,
         photos,
         _subject: subject,
         _replyto: email,
@@ -717,6 +770,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         window.location.href = mailtoUrl;
         setNote(note, 'Opening your email client… we usually reply within 4 business hours.', 'is-success');
         form.reset();
+        syncBranches();
         setBtnState(btn, 'success');
         setTimeout(() => setBtnState(btn, 'idle', original), 8000);
         return;
@@ -729,8 +783,9 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       submitting = false;
 
       if (result.ok) {
-        setNote(note, 'Thanks, we\'ve got your details and will reply within 4 business hours.', 'is-success');
+        setNote(note, 'Thanks, we\'ve got your details and will reply within 4 business hours with an itemised supply-only quote.', 'is-success');
         form.reset();
+        syncBranches();
         setBtnState(btn, 'success');
         setTimeout(() => setBtnState(btn, 'idle', original), 10000);
       } else {
