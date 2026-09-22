@@ -1,7 +1,7 @@
 {
   "name": "fencly-website",
   "version": "1.0.0",
-  "description": "Fencly Australia — WPC composite fencing website",
+  "description": "Fencly Australia, WPC composite fencing website",
   "private": true,
   "scripts": {
     "build:css": "lightningcss-cli --minify css/styles.css -o css/styles.min.css",

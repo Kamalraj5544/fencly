@@ -1,4 +1,4 @@
-/* Critical CSS — inlined in <head> for above-the-fold render.
+/* Critical CSS - inlined in <head> for above-the-fold render.
    Anything below the hero is in the deferred styles.min.css. */
 :root{--c-dark:#2C1810;--c-dark-2:#3B2418;--c-gold:#D4A843;--c-gold-soft:#E2C075;--c-cream:#F5F0E8;--c-text:#1A1A1A;--c-text-soft:#5A4F45;--f-display:'Fraunces','Playfair Display',Georgia,serif;--f-sans:'Inter Tight','DM Sans',system-ui,-apple-system,sans-serif;--ease:cubic-bezier(0.22,1,0.36,1);--container:1280px}
 *,*::before,*::after{box-sizing:border-box}
@@ -65,7 +65,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .btn__arrow{transition:transform 0.3s var(--ease)}
 .word{display:inline-block;overflow:hidden;vertical-align:bottom}
 .word>span{display:inline-block}
-/* Force above-the-fold visible on first paint — overrides any later reveal/split CSS */
+/* Force above-the-fold visible on first paint - overrides any later reveal/split CSS */
 .hero .reveal,.hero[data-reveal],.hero [data-reveal],.hero .split,.hero [data-split]{opacity:1!important;transform:none!important;clip-path:none!important}
 .hero .split .word>span{transform:none!important}
 [data-reveal]{opacity:1}

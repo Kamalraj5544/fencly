@@ -258,7 +258,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       if (activeLink) placeIndicator(activeLink, false);
     });
 
-    // Track active section on scroll — pick whichever section contains the
+    // Track active section on scroll, pick whichever section contains the
     // trigger line (30% from the top of the viewport). This is robust against
     // sections of wildly different heights, which intersection ratios are not.
     const sectionIds = navLinks.map(a => a.dataset.section).filter(Boolean);
@@ -609,7 +609,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
     try {
-      // text/plain body avoids a CORS preflight — required for Google Apps Script
+      // text/plain body avoids a CORS preflight, required for Google Apps Script
       // web apps. The handler still parses it as JSON server-side.
       const res = await fetch(FENCLY_FORM_ENDPOINT, {
         method: 'POST',
@@ -622,7 +622,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       try {
         const json = await res.json();
         if (json && json.ok === false) return { ok: false, reason: json.error || 'server' };
-      } catch (_) { /* non-JSON response — treat 2xx as success */ }
+      } catch (_) { /* non-JSON response, treat 2xx as success */ }
       return { ok: true };
     } catch (err) {
       clearTimeout(timeout);
@@ -744,7 +744,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       }
 
       const productLabel = product === 'cladding' ? 'WPC Cladding' : product === 'gates' ? 'Gates' : 'WPC Fence';
-      const subject = `Fencly supply enquiry — ${productLabel}: ${name} (${postcode})`;
+      const subject = `Fencly supply enquiry: ${productLabel}: ${name} (${postcode})`;
       const mailtoUrl = buildMailto(subject, [
         `Name: ${name}`,
         `Mobile: ${phone}`,
@@ -754,7 +754,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         ''
       ].concat(productLines(data)).concat([
         '',
-        `Delivery or pickup: ${fulfilment === 'pickup' ? 'Pickup — Silverwater' : 'Delivery'}`,
+        `Delivery or pickup: ${fulfilment === 'pickup' ? 'Pickup, Silverwater' : 'Delivery'}`,
         `Installer referral wanted: ${installerReferral === 'yes' ? 'Yes' : 'No'}`,
         photos.length ? `Photos attached: ${photos.length} (please upload via website form for delivery)` : '',
         '',
@@ -787,7 +787,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
 
       if (!FENCLY_FORM_ENDPOINT) {
         window.location.href = mailtoUrl;
-        setNote(note, 'Opening your email client… we usually reply within 4 business hours.', 'is-success');
+        setNote(note, 'Opening your email client… we usually reply within one business day.', 'is-success');
         form.reset();
         syncBranches();
         setBtnState(btn, 'success');
@@ -802,7 +802,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       submitting = false;
 
       if (result.ok) {
-        setNote(note, 'Thanks, we\'ve got your details and will reply within 4 business hours with an itemised supply-only quote.', 'is-success');
+        setNote(note, 'Thanks, we\'ve got your details and will reply within one business day with an itemised supply-only quote.', 'is-success');
         form.reset();
         syncBranches();
         setBtnState(btn, 'success');
@@ -864,7 +864,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
 
       if (!FENCLY_FORM_ENDPOINT) {
         window.location.href = mailtoUrl;
-        setNote(sNote, 'Thanks. Opening your email client. We\'ll text the tracking link the moment it ships.', 'is-success');
+        setNote(sNote, 'Thanks. Opening your email client. We\'ll text you the moment it ships.', 'is-success');
         sForm.reset();
         setBtnState(btn, 'success');
         setTimeout(() => setBtnState(btn, 'idle', original), 8000);
@@ -878,7 +878,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       sSubmitting = false;
 
       if (result.ok) {
-        setNote(sNote, 'Thanks, your sample set is being packed. We\'ll text the tracking link the moment it ships.', 'is-success');
+        setNote(sNote, 'Thanks, your sample set is being packed. We\'ll text you the moment it ships.', 'is-success');
         sForm.reset();
         setBtnState(btn, 'success');
         setTimeout(() => setBtnState(btn, 'idle', original), 10000);

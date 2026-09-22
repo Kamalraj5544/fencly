@@ -1,5 +1,5 @@
 /**
- * FENCLY — Form handler (Google Apps Script Web App)
+ * FENCLY, Form handler (Google Apps Script Web App)
  *
  * Receives JSON form submissions from the Fencly website and:
  *   1. Appends a row to a Google Sheet (one tab per form type)
@@ -21,19 +21,19 @@
 const CONFIG = {
   COMPANY_EMAIL: 'hello@fencly.com.au',
   COMPANY_NAME:  'Fencly',
-  REPLY_HOURS:   '4 business hours',
+  REPLY_HOURS:   'one business day',
   // Drive folder where uploaded photos are stored. Leave blank to auto-create
   // a folder named below at the Drive root on first run.
   ATTACHMENTS_FOLDER_ID: '',
   ATTACHMENTS_FOLDER_NAME: 'Fencly Quote Attachments',
   // Sheet tabs (created automatically on first submission)
   SHEETS: {
-    // ponytail: new tab instead of a migration — the supply-only form changed
+    // ponytail: new tab instead of a migration, the supply-only form changed
     // every quote column. Old leads stay in "Quote Requests".
     quote:        'Quote Requests v2',
     'sample-kit': 'Sample Kit Requests'
   },
-  // Header row per form type — order matters; this is the column layout
+  // Header row per form type, order matters; this is the column layout
   HEADERS: {
     quote: ['Submitted', 'Name', 'Email', 'Mobile', 'Suburb', 'Postcode',
             'Product', 'Spec', 'Style', 'Colour', 'Qty', 'Approx',
@@ -122,7 +122,7 @@ function appendRow(formType, p) {
   } else {
     row = [submitted, p.name || '', p.email || '', p.business || '',
            p.abn || '', p.phone || '', p.address || '', p.postcode || '',
-           p.page || '', '—'];
+           p.page || '', '-'];
   }
   sheet.appendRow(row);
 }
@@ -170,8 +170,8 @@ function saveAttachments(p) {
 
 function sendCompanyEmail(formType, p) {
   const subject = formType === 'quote'
-    ? `New Quote Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`
-    : `New Sample Set Request: ${p.name || 'Anonymous'} (${p.postcode || '—'})`;
+    ? `New Quote Request: ${p.name || 'Anonymous'} (${p.postcode || '-'})`
+    : `New Sample Set Request: ${p.name || 'Anonymous'} (${p.postcode || '-'})`;
 
   const photoLinksHtml = (p.photoLinks || [])
     .map(l => `<a href="${escapeHtml(l.url)}" style="color:#2C1810">${escapeHtml(l.name)}</a>`)
@@ -222,7 +222,7 @@ function sendCompanyEmail(formType, p) {
     <table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid #eee;border-top:none;border-radius:0 0 8px 8px">
       ${tableRows}
     </table>
-    <div style="font-size:12px;color:#888;margin-top:12px">Submitted ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })} (Sydney) · Page: ${escapeHtml(p.page || '—')}</div>
+    <div style="font-size:12px;color:#888;margin-top:12px">Submitted ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })} (Sydney) · Page: ${escapeHtml(p.page || '-')}</div>
   </div>`;
 
   MailApp.sendEmail({
@@ -318,7 +318,7 @@ function sendThankYouEmail(formType, p) {
 
 /**
  * Adds the "Colour" column to an existing "Quote Requests" sheet,
- * inserted between "Approx Length" and "Message". Safe to run twice —
+ * inserted between "Approx Length" and "Message". Safe to run twice -
  * does nothing if the column is already present.
  *
  * Run once from the Apps Script editor: select `migrateAddColourColumn`
@@ -328,7 +328,7 @@ function migrateAddColourColumn() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(CONFIG.SHEETS.quote);
   if (!sheet) {
-    console.log('No "' + CONFIG.SHEETS.quote + '" sheet found — nothing to migrate.');
+    console.log('No "' + CONFIG.SHEETS.quote + '" sheet found, nothing to migrate.');
     return;
   }
 
@@ -336,7 +336,7 @@ function migrateAddColourColumn() {
   const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
 
   if (headers.indexOf('Colour') !== -1) {
-    console.log('"Colour" column already exists — no migration needed.');
+    console.log('"Colour" column already exists, no migration needed.');
     return;
   }
 
@@ -361,7 +361,7 @@ function migrateAddColourColumn() {
  * form: "Remove Existing", "Service" and "Photos". Also renames
  * "Approx Length" → "Approx Length (m)" since the field is now numeric.
  *
- * Safe to run multiple times — each step is a no-op if already applied.
+ * Safe to run multiple times, each step is a no-op if already applied.
  * Run from the Apps Script editor: select `migrateAddPreorderColumns`
  * from the function dropdown, then click Run.
  */
@@ -369,7 +369,7 @@ function migrateAddPreorderColumns() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(CONFIG.SHEETS.quote);
   if (!sheet) {
-    console.log('No "' + CONFIG.SHEETS.quote + '" sheet found — nothing to migrate.');
+    console.log('No "' + CONFIG.SHEETS.quote + '" sheet found, nothing to migrate.');
     return;
   }
 
@@ -467,7 +467,7 @@ function quoteBranch(p) {
 }
 
 function formatFulfilment(v) {
-  return String(v || '').toLowerCase() === 'pickup' ? 'Pickup — Silverwater' : 'Delivery';
+  return String(v || '').toLowerCase() === 'pickup' ? 'Pickup, Silverwater' : 'Delivery';
 }
 
 function formatYesNo(v) {
