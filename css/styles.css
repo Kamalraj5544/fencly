@@ -6263,3 +6263,14 @@ body.cursor-active .cursor-glow { opacity: 1; }
   background: var(--c-dark); border-radius: 16px; overflow: hidden;
 }
 .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+
+/* ===== Quote form: linear-metre calculator ===== */
+.calc {
+  display: block; margin: -6px 0 18px; padding: 14px 16px;
+  background: var(--c-dark); color: var(--c-cream); border-radius: 12px;
+}
+.calc strong { display: block; font-size: 0.98rem; font-weight: 600; }
+.calc__total { display: block; margin-top: 2px; color: var(--c-gold-soft); font-size: 1.05rem; font-weight: 600; }
+.calc__note { display: block; margin-top: 6px; font-size: 0.76rem; line-height: 1.5; opacity: 0.72; }
+.calc[hidden] { display: none; }

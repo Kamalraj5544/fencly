@@ -695,8 +695,45 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         `Style: ${val('fenceStyle') || '(not specified)'}`,
         `Colour: ${val('fenceColour') || '(not specified)'}`,
         `Panels: ${val('panels') || '(not specified)'}`,
-        `Approx run (m): ${val('length') || '(not specified)'}`];
+        `Approx run (m): ${val('length') || '(not specified)'}`,
+        `Estimate: ${(calcOut && !calcOut.hidden ? calcOut.textContent.trim() : '(not calculated)')}`];
     };
+
+    /* Linear-metre calculator. 1.8m panels, extra posts by run length,
+       price from the checked height option. Panels only, no posts or freight. */
+    const PANEL_W = 1.8;
+    const extraPosts = (metres) => metres < 20 ? 1 : metres < 50 ? 2 : 3;
+    const calcOut = document.getElementById('fenceCalc');
+    const lengthEl = form.querySelector('[name="length"]');
+    const panelsEl = form.querySelector('[name="panels"]');
+    const money = (n) => '$' + Math.round(n).toLocaleString('en-AU');
+
+    const runCalc = () => {
+      if (!calcOut) return;
+      const metres = parseFloat(lengthEl && lengthEl.value);
+      const typedPanels = parseInt(panelsEl && panelsEl.value, 10);
+      const height = (form.querySelector('[name="fenceHeight"]:checked') || {}).value || '';
+      const unit = parseFloat((height.match(/\$(\d+)/) || [])[1]);
+
+      let panels, run;
+      if (metres > 0) { run = metres; panels = Math.ceil(metres / PANEL_W); }
+      else if (typedPanels > 0) { panels = typedPanels; run = panels * PANEL_W; }
+      else { calcOut.hidden = true; calcOut.innerHTML = ''; return; }
+
+      const posts = extraPosts(run);
+      const total = unit ? panels * unit : 0;
+      calcOut.hidden = false;
+      calcOut.innerHTML =
+        '<strong>' + (metres > 0 ? run + 'm needs ' : '') + panels + ' panel' + (panels === 1 ? '' : 's') +
+        ' + ' + posts + ' extra post' + (posts === 1 ? '' : 's') + '</strong>' +
+        (total ? '<span class="calc__total">approx ' + money(total) + ' inc GST</span>' : '') +
+        '<span class="calc__note">Panels only at ' + (unit ? money(unit) : '') +
+        ' each. Posts, rails and delivery are confirmed on your written quote.</span>';
+    };
+    [lengthEl, panelsEl].forEach(el => el && el.addEventListener('input', runCalc));
+    form.querySelectorAll('[name="fenceHeight"]').forEach(el => el.addEventListener('change', runCalc));
+    productInputs.forEach(el => el.addEventListener('change', runCalc));
+    runCalc();
 
     let submitting = false;
     form.addEventListener('submit', async (e) => {
@@ -770,6 +807,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         fenceColour: (data.get('fenceColour') || '').toString(),
         panels: (data.get('panels') || '').toString(),
         length: (data.get('length') || '').toString(),
+        estimate: (calcOut && !calcOut.hidden ? calcOut.textContent.trim() : ''),
         claddingBoard: (data.get('claddingBoard') || '').toString(),
         claddingColour: (data.get('claddingColour') || '').toString(),
         boards: (data.get('boards') || '').toString(),
@@ -790,6 +828,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         setNote(note, 'Opening your email client… we usually reply within one business day.', 'is-success');
         form.reset();
         syncBranches();
+        runCalc();
         setBtnState(btn, 'success');
         setTimeout(() => setBtnState(btn, 'idle', original), 8000);
         return;
@@ -805,6 +844,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         setNote(note, 'Thanks, we\'ve got your details and will reply within one business day with an itemised supply-only quote.', 'is-success');
         form.reset();
         syncBranches();
+        runCalc();
         setBtnState(btn, 'success');
         setTimeout(() => setBtnState(btn, 'idle', original), 10000);
       } else {

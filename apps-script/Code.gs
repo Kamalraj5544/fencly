@@ -36,7 +36,7 @@ const CONFIG = {
   // Header row per form type, order matters; this is the column layout
   HEADERS: {
     quote: ['Submitted', 'Name', 'Email', 'Mobile', 'Suburb', 'Postcode',
-            'Product', 'Spec', 'Style', 'Colour', 'Qty', 'Approx',
+            'Product', 'Spec', 'Style', 'Colour', 'Qty', 'Approx', 'Estimate',
             'Fulfilment', 'Installer Referral', 'Message', 'Photos', 'Page'],
     'sample-kit': ['Submitted', 'Name', 'Email', 'Business', 'ABN', 'Mobile',
                    'Address', 'Postcode', 'Page', 'IP']
@@ -116,7 +116,7 @@ function appendRow(formType, p) {
     const b = quoteBranch(p);
     row = [submitted, p.name || '', p.email || '', p.phone || '',
            p.suburb || '', p.postcode || '', b.product,
-           b.spec, b.style, b.colour, b.qty, b.approx,
+           b.spec, b.style, b.colour, b.qty, b.approx, p.estimate || '',
            formatFulfilment(p.fulfilment), formatYesNo(p.installerReferral),
            p.message || '', photosCell, p.page || ''];
   } else {
@@ -190,6 +190,7 @@ function sendCompanyEmail(formType, p) {
     ['Colour',      b.colour],
     [b.qtyLabel,    b.qty],
     [b.approxLabel, b.approx],
+    ['Site estimate', p.estimate],
     ['Delivery or pickup', formatFulfilment(p.fulfilment)],
     ['Installer referral', formatYesNo(p.installerReferral)],
     ['Message',     p.message],
