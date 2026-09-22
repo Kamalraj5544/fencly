@@ -1876,6 +1876,7 @@ body.cursor-active .cursor-glow { opacity: 1; }
 }
 
 .parts { display: flex; flex-wrap: wrap; gap: 8px; }
+.parts__note { margin-top: 10px; font-size: 0.78rem; line-height: 1.5; color: var(--c-text-soft); }
 .part {
   font-size: 0.78rem;
   padding: 8px 14px;
