@@ -667,6 +667,12 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
     productInputs.forEach(i => i.addEventListener('change', syncBranches));
     syncBranches();
 
+    /* Quantity pairs: typing in either half clears the error on both. */
+    [['panels', 'length'], ['boards', 'area']].forEach((pair) => {
+      const els = pair.map(n => form.querySelector(`[name="${n}"]`)).filter(Boolean);
+      els.forEach(el => el.addEventListener('input', () => els.forEach(o => markFieldError(o, false))));
+    });
+
     /* Human-readable summary of whichever branch is active. */
     const productLines = (data) => {
       const product = (data.get('product') || 'fence').toString();
@@ -701,6 +707,19 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         setNote(note, 'Please check the highlighted fields so we can quote you.', 'is-error');
         invalid.focus();
         return;
+      }
+      /* One of the quantity pair must be filled on the active branch. */
+      const pair = { fence: ['panels', 'length'], cladding: ['boards', 'area'] }[currentProduct()];
+      if (pair) {
+        const inputs = pair.map(n => form.querySelector(`[name="${n}"]`)).filter(Boolean);
+        if (inputs.length && !inputs.some(el => (el.value || '').trim())) {
+          inputs.forEach(el => markFieldError(el, true));
+          setNote(note, currentProduct() === 'cladding'
+            ? 'Tell us how many boards you need, or the approximate area in m².'
+            : 'Tell us how many panels you need, or the approximate run in metres.', 'is-error');
+          inputs[0].focus();
+          return;
+        }
       }
       const btn = form.querySelector('button[type="submit"]');
       const original = btn ? btn.innerHTML : '';

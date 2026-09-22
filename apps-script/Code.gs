@@ -28,14 +28,16 @@ const CONFIG = {
   ATTACHMENTS_FOLDER_NAME: 'Fencly Quote Attachments',
   // Sheet tabs (created automatically on first submission)
   SHEETS: {
-    quote:        'Quote Requests',
+    // ponytail: new tab instead of a migration — the supply-only form changed
+    // every quote column. Old leads stay in "Quote Requests".
+    quote:        'Quote Requests v2',
     'sample-kit': 'Sample Kit Requests'
   },
   // Header row per form type — order matters; this is the column layout
   HEADERS: {
     quote: ['Submitted', 'Name', 'Email', 'Mobile', 'Suburb', 'Postcode',
-            'Project Type', 'Approx Length (m)', 'Remove Existing', 'Service',
-            'Colour', 'Message', 'Photos', 'Page', 'IP'],
+            'Product', 'Spec', 'Style', 'Colour', 'Qty', 'Approx',
+            'Fulfilment', 'Installer Referral', 'Message', 'Photos', 'Page'],
     'sample-kit': ['Submitted', 'Name', 'Email', 'Business', 'ABN', 'Mobile',
                    'Address', 'Postcode', 'Page', 'IP']
   }
@@ -111,11 +113,12 @@ function appendRow(formType, p) {
   let row;
   if (formType === 'quote') {
     const photosCell = (p.photoLinks || []).map(l => l.url).join('\n');
+    const b = quoteBranch(p);
     row = [submitted, p.name || '', p.email || '', p.phone || '',
-           p.suburb || '', p.postcode || '', p.project || '',
-           p.length || '', formatYesNo(p.removeExisting),
-           formatService(p.service), p.colour || '', p.message || '',
-           photosCell, p.page || '', '—'];
+           p.suburb || '', p.postcode || '', b.product,
+           b.spec, b.style, b.colour, b.qty, b.approx,
+           formatFulfilment(p.fulfilment), formatYesNo(p.installerReferral),
+           p.message || '', photosCell, p.page || ''];
   } else {
     row = [submitted, p.name || '', p.email || '', p.business || '',
            p.abn || '', p.phone || '', p.address || '', p.postcode || '',
@@ -174,17 +177,21 @@ function sendCompanyEmail(formType, p) {
     .map(l => `<a href="${escapeHtml(l.url)}" style="color:#2C1810">${escapeHtml(l.name)}</a>`)
     .join('<br>');
 
+  const b = quoteBranch(p);
   const rows = formType === 'quote' ? [
     ['Name',        p.name],
     ['Email',       p.email],
     ['Mobile',      p.phone],
     ['Suburb',      p.suburb],
     ['Postcode',    p.postcode],
-    ['Project',     p.project],
-    ['Approx length (m)', p.length],
-    ['Remove existing fence', formatYesNo(p.removeExisting)],
-    ['Service',     formatService(p.service)],
-    ['Colour',      p.colour],
+    ['Product',     b.product],
+    [b.specLabel,   b.spec],
+    ['Style',       b.style],
+    ['Colour',      b.colour],
+    [b.qtyLabel,    b.qty],
+    [b.approxLabel, b.approx],
+    ['Delivery or pickup', formatFulfilment(p.fulfilment)],
+    ['Installer referral', formatYesNo(p.installerReferral)],
     ['Message',     p.message],
     ['Photos',      photoLinksHtml, true]
   ] : [
@@ -240,13 +247,16 @@ function sendThankYouEmail(formType, p) {
     ? `Thanks for getting in touch. Your free measure and quote request is in front of our Sydney team. We usually reply within ${CONFIG.REPLY_HOURS}.`
     : `Thanks for requesting a sample set. We're packing real co-extruded WPC boards and posting them to you within 2–4 business days.`;
 
+  const b = quoteBranch(p);
   const summary = formType === 'quote' ? [
     ['Postcode', p.postcode],
-    ['Project',  p.project],
-    ['Approx length (m)', p.length],
-    ['Remove existing', formatYesNo(p.removeExisting)],
-    ['Service',  formatService(p.service)],
-    ['Colour',   p.colour],
+    ['Product',  b.product],
+    [b.specLabel, b.spec],
+    ['Style',    b.style],
+    ['Colour',   b.colour],
+    [b.qtyLabel, b.qty],
+    [b.approxLabel, b.approx],
+    ['Delivery or pickup', formatFulfilment(p.fulfilment)],
     ['Photos',   (p.photoLinks || []).length ? `${p.photoLinks.length} attached` : '']
   ] : [
     ['Business', p.business],
@@ -430,6 +440,34 @@ function jsonResponse(obj) {
 function firstName(full) {
   if (!full) return 'there';
   return String(full).trim().split(/\s+/)[0];
+}
+
+/** Flattens whichever product branch the enquiry used into one shape. */
+function quoteBranch(p) {
+  const s = v => String(v == null ? '' : v).trim();
+  if (p.product === 'cladding') {
+    return { product: 'WPC Cladding',
+             specLabel: 'Board',  spec:   s(p.claddingBoard),
+             style: '',           colour: s(p.claddingColour),
+             qtyLabel: 'Boards',  qty:    s(p.boards),
+             approxLabel: 'Approx area (m²)', approx: s(p.area) };
+  }
+  if (p.product === 'gates') {
+    return { product: 'Gates',
+             specLabel: 'Gate type', spec: s(p.gateType),
+             style: '',              colour: s(p.gateColour),
+             qtyLabel: 'Gates',      qty:  s(p.gateQty),
+             approxLabel: 'Approx',  approx: '' };
+  }
+  return { product: 'WPC Fence',
+           specLabel: 'Panel height', spec: s(p.fenceHeight),
+           style: s(p.fenceStyle),    colour: s(p.fenceColour),
+           qtyLabel: 'Panels',        qty:  s(p.panels),
+           approxLabel: 'Approx run (m)', approx: s(p.length) };
+}
+
+function formatFulfilment(v) {
+  return String(v || '').toLowerCase() === 'pickup' ? 'Pickup — Silverwater' : 'Delivery';
 }
 
 function formatYesNo(v) {
