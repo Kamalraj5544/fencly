@@ -245,7 +245,7 @@ function sendThankYouEmail(formType, p) {
     : `Thanks ${firstName(p.name)}, your Fencly sample set is on the way`;
 
   const intro = formType === 'quote'
-    ? `Thanks for getting in touch. Your free measure and quote request is in front of our Sydney team. We usually reply within ${CONFIG.REPLY_HOURS}.`
+    ? `Thanks for getting in touch. Your supply-only quote request is in front of our Sydney team. We usually reply within ${CONFIG.REPLY_HOURS}.`
     : `Thanks for requesting a sample set. We're packing real co-extruded WPC boards and posting them to you within 2–4 business days.`;
 
   const b = quoteBranch(p);

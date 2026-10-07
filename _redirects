@@ -1,0 +1,26 @@
+# Clean URLs are canonical; 301 every .html URL to its clean path.
+/index.html / 301!
+/best-wpc-fence-colours-coastal-sydney.html /best-wpc-fence-colours-coastal-sydney 301!
+/faq.html /faq 301!
+/how-to-install-wpc-fence.html /how-to-install-wpc-fence 301!
+/trade-portal.html /trade-portal 301!
+/warranty.html /warranty 301!
+/what-is-co-extruded-wpc.html /what-is-co-extruded-wpc 301!
+/wpc-cladding-supply-blacktown.html /wpc-cladding-supply-blacktown 301!
+/wpc-cladding-supply-liverpool.html /wpc-cladding-supply-liverpool 301!
+/wpc-cladding-supply-northern-beaches.html /wpc-cladding-supply-northern-beaches 301!
+/wpc-cladding-supply-parramatta.html /wpc-cladding-supply-parramatta 301!
+/wpc-cladding-supply-sydney.html /wpc-cladding-supply-sydney 301!
+/wpc-cladding-supply-the-hills.html /wpc-cladding-supply-the-hills 301!
+/wpc-fence-maintenance.html /wpc-fence-maintenance 301!
+/wpc-fencing-blacktown.html /wpc-fencing-blacktown 301!
+/wpc-fencing-colours.html /wpc-fencing-colours 301!
+/wpc-fencing-cost.html /wpc-fencing-cost 301!
+/wpc-fencing-installation.html /wpc-fencing-installation 301!
+/wpc-fencing-liverpool.html /wpc-fencing-liverpool 301!
+/wpc-fencing-northern-beaches.html /wpc-fencing-northern-beaches 301!
+/wpc-fencing-parramatta.html /wpc-fencing-parramatta 301!
+/wpc-fencing-sydney.html /wpc-fencing-sydney 301!
+/wpc-fencing-the-hills.html /wpc-fencing-the-hills 301!
+/wpc-vs-colorbond-fencing.html /wpc-vs-colorbond-fencing 301!
+/wpc-vs-timber-fencing.html /wpc-vs-timber-fencing 301!

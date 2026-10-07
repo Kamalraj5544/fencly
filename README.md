@@ -18,7 +18,7 @@ Plain HTML, CSS and vanilla JS. No framework, no build step.
 
 ## Run locally
 
-Open `index.html` directly in any modern browser — it works from the file system.
+Serve it with a static server (links use clean URLs like `/faq`, so opening files directly won't navigate).
 
 Or serve it with any static server:
 

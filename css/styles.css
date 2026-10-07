@@ -6274,3 +6274,6 @@ body.cursor-active .cursor-glow { opacity: 1; }
 .calc__total { display: block; margin-top: 2px; color: var(--c-gold-soft); font-size: 1.05rem; font-weight: 600; }
 .calc__note { display: block; margin-top: 6px; font-size: 0.76rem; line-height: 1.5; opacity: 0.72; }
 .calc[hidden] { display: none; }
+
+/* Reviews */
+.reviews__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }

@@ -5,7 +5,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://fencly.com.au/</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -57,8 +57,8 @@
 
   <!-- Sydney hub (money page) -->
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-sydney.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fencing-sydney</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -69,30 +69,30 @@
 
   <!-- Cost page -->
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-cost.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fencing-cost</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Comparison pages -->
   <url>
-    <loc>https://fencly.com.au/wpc-vs-colorbond-fencing.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-vs-colorbond-fencing</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fencly.com.au/wpc-vs-timber-fencing.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-vs-timber-fencing</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Colours -->
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-colours.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fencing-colours</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -107,131 +107,131 @@
 
   <!-- Installation service -->
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-installation.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fencing-installation</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Sydney suburb pages -->
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-parramatta.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fencing-parramatta</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-the-hills.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fencing-the-hills</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-northern-beaches.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fencing-northern-beaches</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-liverpool.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fencing-liverpool</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://fencly.com.au/wpc-fencing-blacktown.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fencing-blacktown</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- Guides -->
   <url>
-    <loc>https://fencly.com.au/how-to-install-wpc-fence.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/how-to-install-wpc-fence</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://fencly.com.au/wpc-fence-maintenance.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-fence-maintenance</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://fencly.com.au/best-wpc-fence-colours-coastal-sydney.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/best-wpc-fence-colours-coastal-sydney</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://fencly.com.au/what-is-co-extruded-wpc.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/what-is-co-extruded-wpc</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- Warranty -->
   <url>
-    <loc>https://fencly.com.au/wpc-cladding-supply-sydney.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-cladding-supply-sydney</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://fencly.com.au/wpc-cladding-supply-parramatta.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-cladding-supply-parramatta</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://fencly.com.au/wpc-cladding-supply-the-hills.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-cladding-supply-the-hills</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://fencly.com.au/wpc-cladding-supply-northern-beaches.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-cladding-supply-northern-beaches</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://fencly.com.au/wpc-cladding-supply-liverpool.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-cladding-supply-liverpool</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://fencly.com.au/wpc-cladding-supply-blacktown.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/wpc-cladding-supply-blacktown</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://fencly.com.au/faq.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/faq</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://fencly.com.au/warranty.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/warranty</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- Trade portal (noindex on-page, low priority) -->
   <url>
-    <loc>https://fencly.com.au/trade-portal.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <loc>https://fencly.com.au/trade-portal</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>

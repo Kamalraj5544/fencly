@@ -48,6 +48,9 @@ ul,ol{margin:0;padding:0;list-style:none}
 .hero__eyebrow{display:inline-flex;align-items:center;gap:14px;margin:0 0 32px}
 .hero__title{font-family:var(--f-display);font-weight:300;font-size:clamp(3.2rem,11vw,9.5rem);line-height:0.92;letter-spacing:-0.04em;color:var(--c-cream);margin:0 0 36px;text-wrap:balance}
 .hero__title .accent{font-style:italic;color:var(--c-gold);font-weight:300}
+.hero__title.hero__title--h1{font-size:clamp(2.4rem,5.2vw,5rem);margin-bottom:18px}
+.hero__tagline{font-family:var(--f-display);font-weight:300;font-size:clamp(1.5rem,3vw,2.5rem);line-height:1.1;color:var(--c-cream);margin:0 0 32px}
+.hero__tagline .accent{color:var(--c-gold);font-style:italic}
 .hero__sub{font-size:clamp(1.05rem,1.35vw,1.25rem);color:rgba(245,240,232,0.78);max-width:640px;line-height:1.6;margin:0 0 44px;text-wrap:pretty}
 .hero__sub strong{color:var(--c-gold-soft);font-weight:500}
 .hero__ctas{display:flex;flex-wrap:wrap;gap:14px;margin:0}
