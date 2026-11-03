@@ -697,7 +697,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         `Colour: ${val('fenceColour') || '(not specified)'}`,
         `Panels: ${val('panels') || '(not specified)'}`,
         `Approx run (m): ${val('length') || '(not specified)'}`,
-        `Estimate: ${(calcOut && !calcOut.hidden ? calcOut.textContent.trim() : '(not calculated)')}`];
+        `Estimate: ${(calcOut && !calcOut.hidden ? calcText() : '(not calculated)')}`];
     };
 
     /* Linear-metre calculator. 1.8m panels, extra posts by run length,
@@ -705,6 +705,8 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
     const PANEL_W = 1.8;
     const extraPosts = (metres) => metres < 20 ? 1 : metres < 50 ? 2 : 3;
     const calcOut = document.getElementById('fenceCalc');
+    // Spans join with no whitespace via textContent; separate them for the email/sheet.
+    const calcText = () => calcOut ? [...calcOut.children].map(c => c.textContent.trim()).join(' · ') : '';
     const lengthEl = form.querySelector('[name="length"]');
     const panelsEl = form.querySelector('[name="panels"]');
     const money = (n) => '$' + Math.round(n).toLocaleString('en-AU');
@@ -808,7 +810,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         fenceColour: (data.get('fenceColour') || '').toString(),
         panels: (data.get('panels') || '').toString(),
         length: (data.get('length') || '').toString(),
-        estimate: (calcOut && !calcOut.hidden ? calcOut.textContent.trim() : ''),
+        estimate: (calcOut && !calcOut.hidden ? calcText() : ''),
         claddingBoard: (data.get('claddingBoard') || '').toString(),
         claddingColour: (data.get('claddingColour') || '').toString(),
         boards: (data.get('boards') || '').toString(),
