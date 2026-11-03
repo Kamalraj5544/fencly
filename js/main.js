@@ -162,7 +162,8 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
         }
       });
     }, { threshold: 0.4 });
-    counters.forEach(el => cio.observe(el));
+    // HTML ships the real value (crawlers/no-JS); zero it here so the count-up still plays.
+    counters.forEach(el => { if (!reduce) el.textContent = 0; cio.observe(el); });
   } else {
     counters.forEach(el => el.textContent = el.dataset.count);
   }
@@ -422,7 +423,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
 
   const activateFromHash = () => {
     const hash = window.location.hash.replace('#', '');
-    if (/^p[1-9]$/.test(hash)) {
+    if (/^p\d+$/.test(hash)) {
       const idx = pcards.findIndex(c => c.dataset.tab === hash);
       if (idx >= 0) setActive(idx);
     }
@@ -963,7 +964,7 @@ const FENCLY_FALLBACK_EMAIL = 'hello@fencly.com.au';
       if (id.length <= 1) return;
 
       // Product shortcut: activate tab and scroll to #products
-      if (/^#p[1-9]$/.test(id)) {
+      if (/^#p\d+$/.test(id)) {
         const idx = pcards.findIndex(c => c.dataset.tab === id.slice(1));
         if (idx >= 0) {
           e.preventDefault();
